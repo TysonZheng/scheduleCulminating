@@ -3,7 +3,7 @@ import javafx.scene.*;
 import javafx.stage.*;
 import javafx.fxml.FXMLLoader;
 
-public class App extends Application {
+public class schedulerCulminating extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
