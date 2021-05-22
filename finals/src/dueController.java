@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 
-public class duefController implements Initializable {
+public class dueController implements Initializable {
     
     @FXML
     private TextField task;

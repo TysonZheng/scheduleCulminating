@@ -40,5 +40,5 @@ public class schedulerCulminating extends Application {
             }  
         }, 0, 1000);
     }
-   
+    public static void  
 }
