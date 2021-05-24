@@ -3,9 +3,9 @@ import javafx.scene.*;
 import javafx.stage.*;
 import javafx.fxml.FXMLLoader;
 
-
 public class schedulerCulminating extends Application {
-    
+    private static String task, day, month, year;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
