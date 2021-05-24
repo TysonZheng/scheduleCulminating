@@ -19,7 +19,10 @@ public class schedulerCulminating extends Application {
     }
     
     public static void main(String[] args) throws Exception {
+        //Needs input of the due date of a task
+        //dataDateInput[] = {Year: Month: Day: Hour: Minute} 
         javaTimer();
+        timeAlerts(dueDateInput);
         launch(args);
     }
     public static void javaTimer(){
@@ -40,5 +43,31 @@ public class schedulerCulminating extends Application {
             }  
         }, 0, 1000);
     }
-    public static void  
+    public static void timeAlerts(int[] dueDateInput){
+        //dataDateInput[] = {Year: Month: Day: Hour: Minute}
+        Timer internalClock = new Timer();
+        internalClock.schedule(new TimerTask(){
+            public void run(){
+                LocalTime time = LocalTime.now();
+                DateTimeFormatter minutes = DateTimeFormatter.ofPattern("mm");
+                String minuteInString = time.format(minutes);
+                int minutesDueDate = Integer.parseInt(minuteInString);
+                DateTimeFormatter hour = DateTimeFormatter.ofPattern("HH");
+                String hourInString = time.format(hour);
+                int hoursDueDate = Integer.parseInt(hourInString);
+                LocalDate date = LocalDate.now();
+                DateTimeFormatter day = DateTimeFormatter.ofPattern("dd");
+                String dayInString = date.format(day);
+                int daysDueDate = Integer.parseInt(dayInString);
+                DateTimeFormatter month = DateTimeFormatter.ofPattern("MM");
+                String monthInString = date.format(month);
+                int monthsDueDate = Integer.parseInt(monthInString);
+                DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
+                String yearsInString = date.format(year);
+                int yearsDueDate = Integer.parseInt(yearsInString);
+
+            }  
+        }, 0, 60*1000);
+        
+    }  
 }
