@@ -166,6 +166,10 @@ public class SceneController {
         int returnedDay = daysDueDate + (int)halfAlertDay;
         int returnedHour = hoursDueDate + (int)halfAlertHour;
         int returnedMinute = minutesDueDate + (int)halfAlertMinute;
+        if (returnedMinute>=60){
+            returnedMinute = returnedMinute%60;
+            returnedHour = returnedMinute/60;
+        }
         //Returns as {Year, Month, Day, Hour, Minute}
         int[] returnedArrayDate = {returnedYear, returnedMonth, returnedDay, returnedHour, returnedMinute};
         return returnedArrayDate;
