@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jdk.vm.ci.meta.Local;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import java.time.LocalDate;
@@ -46,27 +47,44 @@ public class SceneController {
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
-                javaTimer();
-                fileInput();
-                fileOutput();
+                //Gets the second every second
+                LocalTime time = LocalTime.now();
+                DateTimeFormatter second= DateTimeFormatter.ofPattern("ss");
+                String secondsInString = time.format(second);
+                int secondsDueDate = Integer.parseInt(secondsInString);
+                //Only gets the date when new minute ()
+                if (secondsDueDate%60 == 0){
+                    javaTimer();
+                }
             }  
         }, 0, 1000);
+        //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
+        fileInput();
+        fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
         halfDateAlertGenerator(dueDateInput);
     }
 
-    public static void javaTimer(){
+    public static int[] javaTimer(){
         LocalTime time = LocalTime.now();
+        DateTimeFormatter minutes = DateTimeFormatter.ofPattern("mm");
+        String minuteInString = time.format(minutes);
+        int minutesDueDate = Integer.parseInt(minuteInString);
+        DateTimeFormatter hour = DateTimeFormatter.ofPattern("HH");
+        String hourInString = time.format(hour);
+        int hoursDueDate = Integer.parseInt(hourInString);
         LocalDate date = LocalDate.now();
-        DateTimeFormatter displayFormat = DateTimeFormatter.ofPattern("HH:mm");
-        DateTimeFormatter seconds = DateTimeFormatter.ofPattern("ss");
-        String formattedDate = time.format(displayFormat);
-        String secondIString = time.format(seconds);
-        int forNewMinute = Integer.parseInt(secondIString);
-        if ((forNewMinute%60) ==0){
-            System.out.println(date);
-            System.out.println(formattedDate);
-        }
+        DateTimeFormatter day = DateTimeFormatter.ofPattern("dd");
+        String dayInString = date.format(day);
+        int daysDueDate = Integer.parseInt(dayInString);
+        DateTimeFormatter month = DateTimeFormatter.ofPattern("MM");
+        String monthInString = date.format(month);
+        int monthsDueDate = Integer.parseInt(monthInString);
+        DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
+        String yearsInString = date.format(year);
+        int yearsDueDate = Integer.parseInt(yearsInString);
+        int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
+        return systemTime;
     }
     public static void fileInput(){
         
@@ -110,49 +128,29 @@ public class SceneController {
     }
 
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
-        LocalTime time = LocalTime.now();
-        DateTimeFormatter minutes = DateTimeFormatter.ofPattern("mm");
-        String minuteInString = time.format(minutes);
-        int minutesDueDate = Integer.parseInt(minuteInString);
-        DateTimeFormatter hour = DateTimeFormatter.ofPattern("HH");
-        String hourInString = time.format(hour);
-        int hoursDueDate = Integer.parseInt(hourInString);
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter day = DateTimeFormatter.ofPattern("dd");
-        String dayInString = date.format(day);
-        int daysDueDate = Integer.parseInt(dayInString);
-        DateTimeFormatter month = DateTimeFormatter.ofPattern("MM");
-        String monthInString = date.format(month);
-        int monthsDueDate = Integer.parseInt(monthInString);
-        DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
-        String yearsInString = date.format(year);
-        int yearsDueDate = Integer.parseInt(yearsInString);
-        System.out.println("Minute:" +minutesDueDate);
-        System.out.println("Hour: " +hoursDueDate);
-        System.out.println("Day:"+daysDueDate);
-        System.out.println("Month:" +monthsDueDate);
-        System.out.println("Year: "+yearsDueDate);
+        //systemTime = {Year, month, day, hour, minute}
+        int[] systemTime = javaTimer();
         //Calculations
-        long minuteTotal = (((((dueDateInput[1]+((dueDateInput[0] - yearsDueDate)*12)) - monthsDueDate)*30))*43200);
-        if(dueDateInput[2]>monthsDueDate){
-            minuteTotal += ((dueDateInput[2] - daysDueDate)*1440);
+        long minuteTotal = (((((dueDateInput[1]+((dueDateInput[0] - systemTime[0])*12)) - systemTime[1])*30))*43200);
+        if(dueDateInput[2]>systemTime[1]){
+            minuteTotal += ((dueDateInput[2] - systemTime[2])*1440);
         }
         else{
-            minuteTotal += (((30-daysDueDate)+dueDateInput[2])*1440);
+            minuteTotal += (((30-systemTime[2])+dueDateInput[2])*1440);
         }
         
-        if (dueDateInput[3] > hoursDueDate){
-            minuteTotal += ((dueDateInput[3] - hoursDueDate)*60);
+        if (dueDateInput[3] > systemTime[3]){
+            minuteTotal += ((dueDateInput[3] - systemTime[3])*60);
         }
         else{
-            minuteTotal += (((24-hoursDueDate) + dueDateInput[3])*60); 
+            minuteTotal += (((24-systemTime[3]) + dueDateInput[3])*60); 
         }
         
         if(dueDateInput[4]> minuteTotal){
             minuteTotal += (dueDateInput[4] - minuteTotal);
         }
         else{
-            minuteTotal += (((60 - minutesDueDate) + dueDateInput[4]-60));
+            minuteTotal += (((60 - systemTime[4]) + dueDateInput[4]-60));
         }
         long halfAlertTimer=minuteTotal/2;
         long halfAlertYears= (halfAlertTimer/525600);
@@ -161,11 +159,11 @@ public class SceneController {
         long halfAlertHour = halfAlertTimer/24 - (halfAlertDay*24);
         long halfAlertMinute = halfAlertTimer- (halfAlertHour*60);
         //Returned values
-        int returnedYear = yearsDueDate + (int)halfAlertYears;
-        int returnedMonth = monthsDueDate + (int)halfAlertMonth;
-        int returnedDay = daysDueDate + (int)halfAlertDay;
-        int returnedHour = hoursDueDate + (int)halfAlertHour;
-        int returnedMinute = minutesDueDate + (int)halfAlertMinute;
+        int returnedYear = systemTime[0] + (int)halfAlertYears;
+        int returnedMonth = systemTime[1] + (int)halfAlertMonth;
+        int returnedDay = systemTime[2] + (int)halfAlertDay;
+        int returnedHour = systemTime[3] + (int)halfAlertHour;
+        int returnedMinute = systemTime[4] + (int)halfAlertMinute;
         if (returnedMinute>=60){
             returnedMinute = returnedMinute%60;
             returnedHour = returnedMinute/60;
@@ -173,5 +171,12 @@ public class SceneController {
         //Returns as {Year, Month, Day, Hour, Minute}
         int[] returnedArrayDate = {returnedYear, returnedMonth, returnedDay, returnedHour, returnedMinute};
         return returnedArrayDate;
+    }
+
+    public static void  breakNotification(){
+
+    }
+    public static void exerciseNotification(){
+
     }
 }
