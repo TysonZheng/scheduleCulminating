@@ -42,7 +42,7 @@ public class SceneController {
         stage.show();
     }
 
-    public static void main(){
+    public static void main() throws IOException{
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -61,7 +61,7 @@ public class SceneController {
         fileInput();
         fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
-        halfDateAlertGenerator(dueDateInput);
+        //halfDateAlertGenerator(dueDateInput);
     }
 
     public static int[] javaTimer(){
@@ -99,7 +99,7 @@ public class SceneController {
         year = reader.nextLine();
         reader.close();
     }
-    public static void fileOutput(){
+    public static void fileOutput() throws IOException{
         String filePath = "schedule.csv";
         try {
             FileWriter fw = new FileWriter(filePath, true);
@@ -120,10 +120,9 @@ public class SceneController {
             
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
+            File scheduleFile = new File("schedule.csv");
+            scheduleFile.createNewFile();
+        }        
     }
 
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
