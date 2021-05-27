@@ -1,33 +1,51 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
 
-public class SceneController {
+public class AppController {
     
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-    private static String task, day, month, year;
+    @FXML
+    private Button GENERATE;
 
-    public void switchScene1(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("main.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    @FXML
+    private TextField DATE;
+
+    @FXML
+    private TextField MONTH;
+
+    @FXML
+    private TextField YEAR;
+
+    @FXML
+    private Button EXIT;
+
+    @FXML 
+    public void onClickGen(ActionEvent E) throws IOException{
+        File file = new File("schedule.csv");
+        FileWriter fw = new FileWriter(file, true);
+
+        fw.write(DATE.getText());
+        fw.write(",");
+        fw.write(MONTH.getText());
+        fw.write(",");
+        fw.write(YEAR.getText());
+        fw.write("\n");
+        fw.close();
+
+        DATE.clear();
+        MONTH.clear();
+        YEAR.clear();
     }
 
-    public void switchScene2(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("due.fxml"));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    @FXML
+    public void onClickExit(ActionEvent E) throws IOException {
+        Platform.exit();
     }
 
-}   
+}
