@@ -8,6 +8,14 @@
         "d:\\JavaFX Lib\\javafx-sdk-11.0.2\\lib\\javafx.media.jar",
         "d:\\JavaFX Lib\\javafx-sdk-11.0.2\\lib\\javafx.swing.jar",
         "d:\\JavaFX Lib\\javafx-sdk-11.0.2\\lib\\javafx.web.jar",
-        "d:\\JavaFX Lib\\javafx-sdk-11.0.2\\lib\\javafx-swt.jar"
+        "d:\\JavaFX Lib\\javafx-sdk-11.0.2\\lib\\javafx-swt.jar",
+        "d:\\JavaFX Library\\lib\\javafx.base.jar",
+        "d:\\JavaFX Library\\lib\\javafx.controls.jar",
+        "d:\\JavaFX Library\\lib\\javafx.fxml.jar",
+        "d:\\JavaFX Library\\lib\\javafx.graphics.jar",
+        "d:\\JavaFX Library\\lib\\javafx.media.jar",
+        "d:\\JavaFX Library\\lib\\javafx.swing.jar",
+        "d:\\JavaFX Library\\lib\\javafx.web.jar",
+        "d:\\JavaFX Library\\lib\\javafx-swt.jar"
     ]
 }

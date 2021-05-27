@@ -173,7 +173,44 @@ public class SceneController {
         return returnedArrayDate;
     }
 
-    public static void  breakNotification(){
+    public static int[]  breakNotification(){
+        int[] systemTimer = javaTimer();
+        int breakTimeMinute = systemTimer[4]+25;
+        int breakTimeHour = 0;
+        int breakTimeDay = 0;
+        int breakTimeMonth = 0;
+        int breakTimeYear = 0;
+        if (breakTimeMinute >= 60){
+            breakTimeHour = systemTimer[3] + 1;
+            breakTimeMinute = breakTimeMinute%60;
+        }
+        else{
+            breakTimeHour = systemTimer[3];
+        }
+        if (breakTimeHour >=24){
+            breakTimeDay = systemTimer[2]+1;
+            breakTimeHour= systemTimer[3]%24;
+        }
+        else{
+            breakTimeDay = systemTimer[2];
+        }
+        if (breakTimeDay>30){
+            breakTimeDay = breakTimeDay%30;
+            breakTimeMonth = systemTimer[1]+1;
+        }
+        else{ 
+            breakTimeDay = systemTimer[2];
+
+        }
+        if (breakTimeMonth>12){
+            breakTimeMonth = breakTimeMonth%12;
+            breakTimeYear = systemTimer[0]+1;
+        }
+        else{ 
+            breakTimeYear = systemTimer[0];
+        }
+        int[] breakTimeDate = {breakTimeYear, breakTimeMonth, breakTimeDay, breakTimeHour, breakTimeMinute};
+        return breakTimeDate;
 
     }
     public static void exerciseNotification(){
