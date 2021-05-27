@@ -24,7 +24,7 @@ public class SceneController {
     private Stage stage;
     private Scene scene;
     private Parent root;
-    private static String task, day, month, year;
+    private static String task, time, day, month, year;
 
     public void switchScene1(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -91,6 +91,8 @@ public class SceneController {
         Scanner reader = new Scanner(System.in);
         System.out.println("Enter the task name");
         task = reader.nextLine();
+        System.out.println("Enter the due Time (Separate the hour and minute with colon, ':'. Ex. 17:45)");
+        time = reader.nextLine();
         System.out.println("Enter the Day (Integer)");
         day = reader.nextLine();
         System.out.println("Enter the month (Integer)");
@@ -107,6 +109,8 @@ public class SceneController {
             PrintWriter pw = new PrintWriter(bw);
             pw.append(task);
             pw.append(":");
+            pw.append(time);
+            pw.append("-");
             pw.append(day);
             pw.append("-");
             pw.append(month);
@@ -123,6 +127,21 @@ public class SceneController {
             File scheduleFile = new File("schedule.csv");
             scheduleFile.createNewFile();
         }        
+    }
+    public static void fileReader() throws IOException{
+        Scanner fileReader;
+        String filePath = "schedule.csv";
+        boolean found = false;
+        String foundTask = "", foundTime = "", foundDay = "", foundMonth = "", foundYear ="";
+        
+        try {
+            fileReader = new Scanner(new File(filePath));
+            fileReader.useDelimiter("[:\n-]");
+
+            while (filereader.hasNext() && !found){
+                
+            }
+        }
     }
 
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
