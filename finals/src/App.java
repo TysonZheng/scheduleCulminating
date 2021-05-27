@@ -49,6 +49,7 @@ public class App extends Application {
             }  
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
+        
         fileInput();
         fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
@@ -215,11 +216,9 @@ public class App extends Application {
             return false;  //else return false
  
         }
-        
-        
 
     }
     public static void exerciseNotification(){
-
+        
     }
 }
