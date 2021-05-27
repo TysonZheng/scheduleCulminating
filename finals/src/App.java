@@ -18,8 +18,6 @@ import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-
-
 public class App extends Application {
     private static String task, day, month, year;
 
