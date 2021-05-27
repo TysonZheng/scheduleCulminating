@@ -17,7 +17,7 @@
             "request": "launch",
             "mainClass": "schedulerCulminating",
             "projectName": "scheduleCulminating_8a6f0f3b",
-            "vmArgs": "--module-path /home/local/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib --add-modules=javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path D:/JavaFX Library/lib --add-modules=javafx.controls,javafx.fxml"
             
         },
         {

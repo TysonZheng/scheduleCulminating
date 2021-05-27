@@ -18,8 +18,6 @@ import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-
-
 public class App extends Application {
     private static String task, day, month, year;
 
@@ -78,20 +76,7 @@ public class App extends Application {
         int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         return systemTime;
     }
-    public static void fileInput(){
-        
-        //SCANNER INPUT IS TEMPORARY SINCE IT WILL BE IMPLEMENTED INTO GUI
-        Scanner reader = new Scanner(System.in);
-        System.out.println("Enter the task name");
-        task = reader.nextLine();
-        System.out.println("Enter the Day (Integer)");
-        day = reader.nextLine();
-        System.out.println("Enter the month (Integer)");
-        month = reader.nextLine();
-        System.out.println("Enter the year (Integer)");
-        year = reader.nextLine();
-        reader.close();
-    }
+    
     public static void fileOutput(){
         String filePath = "schedule.csv";
         try {
