@@ -104,6 +104,44 @@ public class App extends Application {
         
     }
 
+    public static void fileReader() throws IOException{
+        Scanner fileReader;
+        Scanner reader = new Scanner(System.in);
+        String filePath = "schedule.csv";
+        boolean found = false;
+        String foundTask = "", foundTime = "", foundDay = "", foundMonth = "", foundYear ="";
+        String searchTask;
+
+        System.out.println("Enter the task you're looking for");
+        searchTask = reader.nextLine();
+
+        try {
+            fileReader = new Scanner(new File(filePath));
+            fileReader.useDelimiter("[:\n-]");
+
+            while (fileReader.hasNext() && !found){
+                foundTask = fileReader.next();
+                foundTime = fileReader.next();
+                foundDay = fileReader.next();
+                foundMonth = fileReader.next();
+                foundYear = fileReader.next();
+
+                if (foundTask.equals(searchTask)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                System.out.println("Task Name: " + foundTask + " Due Time: " + foundTime + " Day: " + foundDay + " Month: " + foundMonth + " Year: " + foundYear);
+            }
+            else {
+                System.out.println("TASK NOT FOUND");
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR");
+        }
+        reader.close();
+    }
+
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
