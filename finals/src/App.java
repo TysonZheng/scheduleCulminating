@@ -49,11 +49,12 @@ public class App extends Application {
             }  
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
-        
         fileInput();
         fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
         halfDateAlertGenerator(dueDateInput);
+        tenminutegenerator(dueDateInput);
+
     }
     
     public static int[] javaTimer(){
@@ -77,34 +78,6 @@ public class App extends Application {
         int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         return systemTime;
     }
-    
-    public static void fileOutput(){
-        String filePath = "schedule.csv";
-        try {
-            FileWriter fw = new FileWriter(filePath, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(bw);
-            pw.append(task);
-            pw.append(":");
-            pw.append(day);
-            pw.append("-");
-            pw.append(month);
-            pw.append("-");
-            pw.append(year);
-            pw.append("\n");
-            pw.flush();
-            pw.close();
-
-            System.out.println("ELEMENTS ADDED TO FILE");
-            
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-    }
-
     public static void fileReader() throws IOException{
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
@@ -141,6 +114,32 @@ public class App extends Application {
             System.out.println("ERROR");
         }
         reader.close();
+    }
+    public static void fileOutput(){
+        String filePath = "schedule.csv";
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
+            pw.append(task);
+            pw.append(":");
+            pw.append(day);
+            pw.append("-");
+            pw.append(month);
+            pw.append("-");
+            pw.append(year);
+            pw.append("\n");
+            pw.flush();
+            pw.close();
+
+            System.out.println("ELEMENTS ADDED TO FILE");
+            
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
@@ -254,9 +253,19 @@ public class App extends Application {
             return false;  //else return false
  
         }
-
-    }
-    public static void exerciseNotification(){
         
+    }
+    
+    public void exerciseNotification() {
+        TimerTask repeatedTask = new TimerTask() {
+            public void run() {
+                //Add Exercise to Task
+            }
+        };
+        Timer timer = new Timer("Timer");
+        
+        long delay = 1000L;
+        long period = 1000L * 60L * 60L * 24L;
+        timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
 }

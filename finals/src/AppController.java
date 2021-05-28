@@ -14,6 +14,9 @@ public class AppController {
     private Button GENERATE;
 
     @FXML
+    private TextField TASK;
+
+    @FXML
     private TextField DATE;
 
     @FXML
@@ -23,6 +26,12 @@ public class AppController {
     private TextField YEAR;
 
     @FXML
+    private TextField HOUR;
+
+    @FXML
+    private TextField MINUTE;
+
+    @FXML
     private Button EXIT;
 
     @FXML 
@@ -30,17 +39,26 @@ public class AppController {
         File file = new File("schedule.csv");
         FileWriter fw = new FileWriter(file, true);
 
-        fw.write(DATE.getText());
+        fw.write(TASK.getText());
+        fw.write(",");
+        fw.write(YEAR.getText());
         fw.write(",");
         fw.write(MONTH.getText());
         fw.write(",");
-        fw.write(YEAR.getText());
+        fw.write(DATE.getText());
+        fw.write(",");
+        fw.write(HOUR.getText());
+        fw.write(",");
+        fw.write(MINUTE.getText());
         fw.write("\n");
         fw.close();
 
-        DATE.clear();
-        MONTH.clear();
         YEAR.clear();
+        MONTH.clear();
+        DATE.clear();
+        HOUR.clear();
+        MINUTE.clear();
+        TASK.clear();
     }
 
     @FXML
