@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -28,15 +29,20 @@
                   <Font name="Segoe Print" size="43.0" />
                </font>
             </Text>
-            <Button fx:id="GENERATE" layoutX="287.0" layoutY="188.0" mnemonicParsing="false" onAction="#onClickGen" prefHeight="23.0" prefWidth="100.0" text="GENERATE">
+            <Button fx:id="GENERATE" layoutX="566.0" layoutY="190.0" mnemonicParsing="false" onAction="#onClickGen" prefHeight="23.0" prefWidth="100.0" text="GENERATE">
                <font>
                   <Font name="Courier New" size="16.0" />
                </font>
             </Button>
-            <TextField fx:id="DATE" layoutX="76.0" layoutY="190.0" prefHeight="25.0" prefWidth="45.0" promptText="DATE" />
-            <TextField fx:id="MONTH" layoutX="137.0" layoutY="190.0" prefHeight="25.0" prefWidth="61.0" promptText="MONTH" />
-            <TextField fx:id="YEAR" layoutX="217.0" layoutY="190.0" prefHeight="25.0" prefWidth="43.0" promptText="YEAR" />
-            <Button fx:id="EXIT" layoutX="1064.0" layoutY="64.0" mnemonicParsing="false" onAction="#onClickExit" text="Button" />
+            <TextField fx:id="DATE" layoutX="197.0" layoutY="192.0" prefHeight="25.0" prefWidth="45.0" promptText="DATE" />
+            <TextField fx:id="MONTH" layoutX="264.0" layoutY="192.0" prefHeight="25.0" prefWidth="61.0" promptText="MONTH" />
+            <TextField fx:id="YEAR" layoutX="347.0" layoutY="192.0" prefHeight="25.0" prefWidth="43.0" promptText="YEAR" />
+            <Button fx:id="EXIT" layoutX="1094.0" layoutY="52.0" mnemonicParsing="false" onAction="#onClickExit" text="Close" />
+            <TextField fx:id="HOUR" layoutX="411.0" layoutY="192.0" prefHeight="25.0" prefWidth="50.0" promptText="HOUR" />
+            <TextField fx:id="MINUTE" layoutX="476.0" layoutY="192.0" prefHeight="25.0" prefWidth="67.0" promptText="MINUTES" />
+            <TextField fx:id="TASK" layoutX="25.0" layoutY="192.0" promptText="TASK NAME" />
+            <TextArea fx:id="tarea" layoutX="24.0" layoutY="305.0" prefHeight="200.0" prefWidth="200.0" />
+            <Button fx:id="refresh" layoutX="37.0" layoutY="271.0" mnemonicParsing="false" onAction="#onClickRefresh" text="REFRESH" />
          </children></AnchorPane>
    </left>
 </BorderPane>
