@@ -33,6 +33,12 @@ public class AppController {
 
     @FXML
     private Button EXIT;
+    
+    @FXML
+    private TextArea tarea;
+
+    @FXML 
+    private Button refresh;
 
     @FXML 
     public void onClickGen(ActionEvent E) throws IOException{
@@ -64,6 +70,16 @@ public class AppController {
     @FXML
     public void onClickExit(ActionEvent E) throws IOException {
         Platform.exit();
+    }
+    
+    @FXML
+    public void onClickRefresh(ActionEvent E) throws IOException {
+        Path fileN = Path.of("schedule.csv");
+        String text = Files.readString(fileN);
+            while(text != null) {
+                tarea.setText(text + "\n");
+            }
+            System.out.println(text);
     }
 
 }
