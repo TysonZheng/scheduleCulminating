@@ -8,18 +8,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class App extends Application {
-    private static String task, day, month, year;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -50,10 +48,11 @@ public class App extends Application {
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         
-        fileOutput();
+        //fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
-        halfDateAlertGenerator(dueDateInput);
-        tenminutegenerator(dueDateInput);
+        //halfDateAlertGenerator(dueDateInput);
+        //tenminutegenerator(dueDateInput);
+        fileReader();
 
     }
     
@@ -78,12 +77,12 @@ public class App extends Application {
         int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         return systemTime;
     }
-    public static void fileReader() throws IOException{
+    public static void fileSearcher() throws IOException{
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
         String filePath = "schedule.csv";
         boolean found = false;
-        String foundTask = "", foundTime = "", foundDay = "", foundMonth = "", foundYear ="";
+        String foundTask = "", foundDay = "", foundMonth = "", foundYear ="", foundHour = "", foundMinute = "";
         String searchTask;
 
         System.out.println("Enter the task you're looking for");
@@ -95,53 +94,54 @@ public class App extends Application {
 
             while (fileReader.hasNext() && !found){
                 foundTask = fileReader.next();
-                foundTime = fileReader.next();
                 foundDay = fileReader.next();
                 foundMonth = fileReader.next();
                 foundYear = fileReader.next();
+                foundHour = fileReader.next();
+                foundMinute = fileReader.next();
 
                 if (foundTask.equals(searchTask)) {
                     found = true;
                 }
             }
             if (found) {
-                System.out.println("Task Name: " + foundTask + " Due Time: " + foundTime + " Day: " + foundDay + " Month: " + foundMonth + " Year: " + foundYear);
+                System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-" + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
             }
             else {
-                System.out.println("TASK NOT FOUND");
+                System.out.println("TASK NOT FOUND. MAKE SURE YOU INPUTTED THE RIGHT TASK NAME AND THERE ARE ENTRIES IN THE FILE");
             }
         } catch (Exception e) {
             System.out.println("ERROR");
         }
         reader.close();
     }
-    public static void fileOutput(){
-        String filePath = "schedule.csv";
-        try {
-            FileWriter fw = new FileWriter(filePath, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(bw);
-            pw.append(task);
-            pw.append(":");
-            pw.append(day);
-            pw.append("-");
-            pw.append(month);
-            pw.append("-");
-            pw.append(year);
-            pw.append("\n");
-            pw.flush();
-            pw.close();
+    public static int countLines() {
 
-            System.out.println("ELEMENTS ADDED TO FILE");
-            
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+        int lines = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader("schedule.csv"))) {
+            while (reader.readLine() != null) lines++;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+        return lines;
+  
     }
-
+    public static void fileReader() throws IOException {
+        String line = "";
+        int numOfLines = countLines();
+        String task[] = new String[numOfLines];
+        int counter = 0;
+        try {
+            BufferedReader csvReader = new BufferedReader(new FileReader("schedule.csv"));
+            while ((line = csvReader.readLine()) != null) {
+                task[counter] = line;
+                counter++;
+            }
+            csvReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();

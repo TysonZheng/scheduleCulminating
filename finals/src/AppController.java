@@ -1,12 +1,15 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 
 public class AppController {
     
@@ -46,15 +49,15 @@ public class AppController {
         FileWriter fw = new FileWriter(file, true);
 
         fw.write(TASK.getText());
-        fw.write(",");
+        fw.write(": ");
         fw.write(YEAR.getText());
-        fw.write(",");
+        fw.write("-");
         fw.write(MONTH.getText());
-        fw.write(",");
+        fw.write("-");
         fw.write(DATE.getText());
-        fw.write(",");
+        fw.write("-");
         fw.write(HOUR.getText());
-        fw.write(",");
+        fw.write(":");
         fw.write(MINUTE.getText());
         fw.write("\n");
         fw.close();
