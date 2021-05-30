@@ -126,7 +126,7 @@ public class App extends Application {
         return lines;
   
     }
-    public static void fileReader() throws IOException {
+    public static String[] fileReader() throws IOException {
         String line = "";
         int numOfLines = countLines();
         String task[] = new String[numOfLines];
@@ -141,6 +141,7 @@ public class App extends Application {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return task;
     }
     public static int[] halfDateAlertGenerator(int dueDateInput[]){
         //systemTime = {Year, month, day, hour, minute}
