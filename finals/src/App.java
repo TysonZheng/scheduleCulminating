@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.time.ZoneId;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -50,10 +51,10 @@ public class App extends Application {
         
         //fileOutput();
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
-        //halfDateAlertGenerator(dueDateInput);
-        //tenminutegenerator(dueDateInput);
-        fileReader();
-
+        String[] dueDateInput = fileReader();
+        
+        halfDateAlertGenerator(dueDateInput);
+        tenminutegenerator(dueDateInput);
     }
     
     public static int[] javaTimer(){
@@ -143,25 +144,21 @@ public class App extends Application {
         }
         return task;
     }
-    public static int[] halfDateAlertGenerator(int dueDateInput[]){
-        //systemTime = {Year, month, day, hour, minute}
+    public static int[] halfAlertCalculations(int[]dueDateInput, String taskName){
         int[] systemTime = javaTimer();
-        //Calculations
         long minuteTotal = (((((dueDateInput[1]+((dueDateInput[0] - systemTime[0])*12)) - systemTime[1])*30))*43200);
         if(dueDateInput[2]>systemTime[1]){
             minuteTotal += ((dueDateInput[2] - systemTime[2])*1440);
-        }
+        }            
         else{
             minuteTotal += (((30-systemTime[2])+dueDateInput[2])*1440);
-        }
-        
+        }    
         if (dueDateInput[3] > systemTime[3]){
             minuteTotal += ((dueDateInput[3] - systemTime[3])*60);
         }
         else{
             minuteTotal += (((24-systemTime[3]) + dueDateInput[3])*60); 
-        }
-        
+        }         
         if(dueDateInput[4]> minuteTotal){
             minuteTotal += (dueDateInput[4] - minuteTotal);
         }
@@ -184,51 +181,36 @@ public class App extends Application {
             returnedMinute = returnedMinute%60;
             returnedHour = returnedMinute/60;
         }
-        //Returns as {Year, Month, Day, Hour, Minute}
-        int[] returnedArrayDate = {returnedYear, returnedMonth, returnedDay, returnedHour, returnedMinute};
+        //Returns as Task Name:Year-Month-Day-Hour:Minute
+        String returnedArrayDate = taskName +":" + String.valueOf(Integer(returnedYear)) + "-"+String.valueOf(Integer(returnedMonth))+"-"+String.valueOf(Integer(returnedDay))+"-"+String.valueOf(Integer(returnedHour))+":"+String.valueOf(Integer(returnedMinute));
         return returnedArrayDate;
     }
-
-    public static int[]  breakNotification(){
-        int[] systemTimer = javaTimer();
-        int breakTimeMinute = systemTimer[4]+25;
-        int breakTimeHour = 0;
-        int breakTimeDay = 0;
-        int breakTimeMonth = 0;
-        int breakTimeYear = 0;
-        if (breakTimeMinute >= 60){
-            breakTimeHour = systemTimer[3] + 1;
-            breakTimeMinute = breakTimeMinute%60;
+    public static int[] halfDateAlertGenerator(String[] dueDateCSV){
+        //systemTime = {Year, month, day, hour, minute}
+        int[] systemTime = javaTimer();
+        int[] halfTimeArray = new int[0];
+        for (int i =0; i<dueDateCSV.length; i++){
+            //Calculations
+            String newDate = dueDateCSV[i];
+            String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
+            String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
+            String[] timeSplit = initialSplit[3].split(":");//[0] = Hour, [1] = Minute
+            long year = Long.parseLong(taskNameSplit[1]);
+            long month = Long.parseLong(initialSplit[1]);
+            long day = Long.parseLong(initialSplit[2]);
+            long hour = Long.parseLong(timeSplit[0]);
+            long minute = Long.parseLong(timeSplit[1]);
+            int[] dueDateFormatted = {year,month,day,hour,minute};
+            String halfDue = halfAlertCalculations(dueDateFormatted, taskNameSplit[0]);
+            halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
+            halfTimeArray[halfTimeArray.length - 1] = halfDue; 
+            
         }
-        else{
-            breakTimeHour = systemTimer[3];
-        }
-        if (breakTimeHour >=24){
-            breakTimeDay = systemTimer[2]+1;
-            breakTimeHour= systemTimer[3]%24;
-        }
-        else{
-            breakTimeDay = systemTimer[2];
-        }
-        if (breakTimeDay>30){
-            breakTimeDay = breakTimeDay%30;
-            breakTimeMonth = systemTimer[1]+1;
-        }
-        else{ 
-            breakTimeDay = systemTimer[2];
-
-        }
-        if (breakTimeMonth>12){
-            breakTimeMonth = breakTimeMonth%12;
-            breakTimeYear = systemTimer[0]+1;
-        }
-        else{ 
-            breakTimeYear = systemTimer[0];
-        }
-        int[] breakTimeDate = {breakTimeYear, breakTimeMonth, breakTimeDay, breakTimeHour, breakTimeMinute};
-        return breakTimeDate;
-
+        return halfTimeArray;
+        
     }
+
+    
     public static boolean tenminutegenerator(int dueDateInput[]){
 
         int[] systemTime= javaTimer();  //Loads the local system time into an array int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
@@ -265,8 +247,22 @@ public class App extends Application {
         };
         Timer timer = new Timer("Timer");
         
-        long delay = 1000L;
-        long period = 1000L * 60L * 60L * 24L;
+        long delay = 0;
+        long period = 1000 * 60 * 60 * 24;
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
+    }
+
+    public static void breakNotification(){
+        TimerTask repeatedTask = new TimerTask() {
+            public void run() {
+                //Displays the notication
+            }
+        };
+        Timer timer = new Timer("Timer");
+        
+        long delay = 25*60*1000;
+        long period = 30*60*1000;
+        timer.scheduleAtFixedRate(repeatedTask, delay, period);
+
     }
 }
