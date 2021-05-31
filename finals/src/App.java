@@ -223,6 +223,7 @@ public class App extends Application {
             String halfDue = halfAlertCalculations(dueDateFormatted, taskNameSplit[0]);
             halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
             halfTimeArray[halfTimeArray.length - 1] = halfDue;    
+            System.out.println("TEST: " + halfTimeArray[i]);
         }
         return halfTimeArray;
         
