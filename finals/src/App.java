@@ -54,7 +54,7 @@ public class App extends Application {
         String[] dueDateInput = fileReader();
         
         halfDateAlertGenerator(dueDateInput);
-        tenminutegenerator();
+        //tenminutegenerator();
     }
     
     public static int[] javaTimer(){
@@ -145,6 +145,7 @@ public class App extends Application {
         return task;
     }
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
+        //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
         long minuteTotal = (((((dueDateInput[1]+((dueDateInput[0] - systemTime[0])*12)) - systemTime[1])*30))*43200);
         if(dueDateInput[2]>systemTime[1]){
@@ -186,8 +187,6 @@ public class App extends Application {
         return returnedArrayDate;
     }
     public static String[] halfDateAlertGenerator(String[] dueDateCSV){
-        //systemTime = {Year, month, day, hour, minute}
-        int[] systemTime = javaTimer();
         String[] halfTimeArray = new String[0];
         for (int i =0; i<dueDateCSV.length; i++){
             //Calculations
@@ -203,13 +202,11 @@ public class App extends Application {
             int[] dueDateFormatted = {year,month,day,hour,minute};
             String halfDue = halfAlertCalculations(dueDateFormatted, taskNameSplit[0]);
             halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
-            halfTimeArray[halfTimeArray.length - 1] = halfDue; 
-            
+            halfTimeArray[halfTimeArray.length - 1] = halfDue;    
         }
         return halfTimeArray;
         
     }
-
     
     public static boolean tenminutegenerator(int dueDateInput[]){
 
@@ -264,5 +261,8 @@ public class App extends Application {
         long period = 30*60*1000;
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
 
+    }
+    public static void compareMethods(){
+        
     }
 }
