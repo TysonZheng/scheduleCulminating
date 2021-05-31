@@ -78,16 +78,13 @@ public class App extends Application {
         int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         return systemTime;
     }
-    public static void fileSearcher() throws IOException{
+    public static String fileSearcher(String searchTask) throws IOException{
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
-        String filePath = "schedule.csv";
+        String filePath = "halfalerts.csv";
         boolean found = false;
         String foundTask = "", foundDay = "", foundMonth = "", foundYear ="", foundHour = "", foundMinute = "";
-        String searchTask;
-
-        System.out.println("Enter the task you're looking for");
-        searchTask = reader.nextLine();
+        String foundInformation = "";
 
         try {
             fileReader = new Scanner(new File(filePath));
@@ -107,14 +104,19 @@ public class App extends Application {
             }
             if (found) {
                 System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-" + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
+                foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
+                
+                //Returns as Task Name:Year-Month-Day-Hour:Minute
             }
             else {
                 System.out.println("TASK NOT FOUND. MAKE SURE YOU INPUTTED THE RIGHT TASK NAME AND THERE ARE ENTRIES IN THE FILE");
+                
             }
         } catch (Exception e) {
             System.out.println("ERROR");
         }
         reader.close();
+        return foundInformation;
     }
     public static int countLines() {
 
@@ -194,7 +196,7 @@ public class App extends Application {
             String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
             String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
             String[] timeSplit = initialSplit[3].split(":");//[0] = Hour, [1] = Minute
-            int year = Integer.parseInt(taskNameSplit[1]);
+            int year = (int) Long.parseLong(taskNameSplit[1]);
             int month = (int) Long.parseLong(initialSplit[1]);
             int day = (int)Long.parseLong(initialSplit[2]);
             int hour = (int)Long.parseLong(timeSplit[0]);
