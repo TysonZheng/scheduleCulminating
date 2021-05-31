@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.time.ZoneId;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
 
 public class App extends Application {
@@ -53,7 +54,7 @@ public class App extends Application {
         //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
         String[] dueDateInput = fileReader();
         
-        halfDateAlertGenerator(dueDateInput);
+        fileWriter(dueDateInput);
         //tenminutegenerator();
     }
     
@@ -146,6 +147,23 @@ public class App extends Application {
         }
         return task;
     }
+    public static void fileWriter(String[] dueDateCSV) throws IOException {
+        String[] arr = halfDateAlertGenerator(dueDateCSV);
+        File filePath = new File("halfalerts.csv");
+        FileWriter fw = new FileWriter(filePath, true);
+        try {
+            for (int i = 0; i < arr.length; i++) {
+                System.out.println(arr[i]);
+                fw.append(arr[i]);
+                fw.append("\n");
+                System.out.println("Element " + i + " added to csv");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        fw.close();
+    }
+
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
