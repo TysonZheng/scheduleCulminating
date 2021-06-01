@@ -70,6 +70,9 @@ public class App extends Application {
         DateTimeFormatter day = DateTimeFormatter.ofPattern("dd");
         String dayInString = date.format(day);
         int daysDueDate = Integer.parseInt(dayInString);
+        if (daysDueDate >30){
+            daysDueDate = 30;
+        }
         DateTimeFormatter month = DateTimeFormatter.ofPattern("MM");
         String monthInString = date.format(month);
         int monthsDueDate = Integer.parseInt(monthInString);
@@ -167,40 +170,70 @@ public class App extends Application {
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
-        long minuteTotal = (((((dueDateInput[1]+((dueDateInput[0] - systemTime[0])*12)) - systemTime[1])*30))*43200);
-        if(dueDateInput[2]>systemTime[1]){
-            minuteTotal += ((dueDateInput[2] - systemTime[2])*1440);
-        }            
-        else{
-            minuteTotal += (((30-systemTime[2])+dueDateInput[2])*1440);
-        }    
-        if (dueDateInput[3] > systemTime[3]){
-            minuteTotal += ((dueDateInput[3] - systemTime[3])*60);
+        long minuteTotal = 0;
+        if ((dueDateInput[0] > systemTime[0]) && ((((dueDateInput[0] - systemTime[0])*12 - systemTime[1])+dueDateInput[1])>12)){
+            minuteTotal += ((((dueDateInput[0] - systemTime[0])*12 - systemTime[1])+(dueDateInput[1]-1))*43800);
+        }
+        else if (dueDateInput[1]>systemTime[1]){ 
+            minuteTotal+= (((dueDateInput[1]-1 -systemTime[1]))*43800);
         }
         else{
-            minuteTotal += (((24-systemTime[3]) + dueDateInput[3])*60); 
+            minuteTotal += ((12- systemTime[1])+dueDateInput[1]);
+        }
+        if(dueDateInput[2]>systemTime[2]&&((dueDateInput[1]-systemTime[1])==1)){
+            minuteTotal += (((dueDateInput[2] - systemTime[2])+29)*1440);
+        }  
+        else if(dueDateInput[2]>systemTime[2]){
+            minuteTotal += (((dueDateInput[2] - systemTime[2] -1))*1440);
         }         
-        if(dueDateInput[4]> minuteTotal){
-            minuteTotal += (dueDateInput[4] - minuteTotal);
+        else{
+            minuteTotal += (((30-systemTime[2])+dueDateInput[2]-1)*1440);
+        }    
+        if (dueDateInput[3] > systemTime[3] ){
+            minuteTotal += ((dueDateInput[3] - systemTime[3]+23)*60);
+        } 
+        else{
+            minuteTotal += (((23-systemTime[3]) + dueDateInput[3])*60); 
+        }         
+        if(dueDateInput[4]> systemTime[4]){
+            minuteTotal += (dueDateInput[4] - systemTime[4]+60);
         }
         else{
-            minuteTotal += (((60 - systemTime[4]) + dueDateInput[4]-60));
+            minuteTotal += (((60 - systemTime[4]) + dueDateInput[4]));
         }
         long halfAlertTimer=minuteTotal/2;
         long halfAlertYears= (halfAlertTimer/525600);
         long halfAlertMonth = halfAlertTimer/ 43800 - (halfAlertYears*12); 
-        long halfAlertDay = halfAlertTimer/1440 - (halfAlertMonth*30);
-        long halfAlertHour = halfAlertTimer/24 - (halfAlertDay*24);
-        long halfAlertMinute = halfAlertTimer- (halfAlertHour*60);
+        long halfAlertDay = halfAlertTimer/1440 - (halfAlertMonth*30+(halfAlertYears*12)*30);
+        long halfAlertHour = halfAlertTimer/(60) - ((halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24);
+        long halfAlertMinute = halfAlertTimer- ((halfAlertHour+(halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24)*60);
+        
         //Returned values
         int returnedYear = systemTime[0] + (int)halfAlertYears;
         int returnedMonth = systemTime[1] + (int)halfAlertMonth;
         int returnedDay = systemTime[2] + (int)halfAlertDay;
         int returnedHour = systemTime[3] + (int)halfAlertHour;
         int returnedMinute = systemTime[4] + (int)halfAlertMinute;
-        if (returnedMinute>=60){
+        
+        if (returnedMinute>60){
+            returnedHour += returnedMinute/60;
             returnedMinute = returnedMinute%60;
-            returnedHour = returnedMinute/60;
+        }
+        
+        if(returnedHour>24){
+            returnedDay += returnedHour/24;
+            returnedHour = returnedHour%24;
+            
+        }
+        if(returnedDay >30){
+            returnedMonth += returnedDay/30;
+            returnedDay = returnedDay%30;
+            
+        }
+        if(returnedMonth > 12){
+            returnedYear += returnedMonth/12;
+            returnedMonth = returnedMonth%12;
+            
         }
         //Returns as Task Name:Year-Month-Day-Hour:Minute
         String returnedArrayDate = taskName +":" + String.valueOf((returnedYear)) + "-"+String.valueOf((returnedMonth))+"-"+String.valueOf((returnedDay))+"-"+String.valueOf((returnedHour))+":"+String.valueOf((returnedMinute));
