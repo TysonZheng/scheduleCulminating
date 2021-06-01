@@ -11,12 +11,12 @@ import java.util.TimerTask;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.time.ZoneId;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedReader;
 
 public class App extends Application {
@@ -153,18 +153,18 @@ public class App extends Application {
     public static void fileWriter(String[] dueDateCSV) throws IOException {
         String[] arr = halfDateAlertGenerator(dueDateCSV);
         File filePath = new File("halfalerts.csv");
-        FileWriter fw = new FileWriter(filePath, true);
-        try {
+        try (PrintWriter writer = new PrintWriter(filePath)){
             for (int i = 0; i < arr.length; i++) {
+                StringBuilder sb = new StringBuilder();
                 System.out.println(arr[i]);
-                fw.append(arr[i]);
-                fw.append("\n");
+                sb.append(arr[i]);
+                sb.append("\n");
                 System.out.println("Element " + i + " added to csv");
+                writer.write(sb.toString());
             }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
-        fw.close();
     }
 
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
