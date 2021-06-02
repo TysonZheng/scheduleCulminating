@@ -302,8 +302,10 @@ public class App extends Application {
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
     public static void compareMethods(String[]dueDateCSV) throws IOException {
-        int[] systemTime = javaTimer();\
-        int alertSent =0;
+        int[] systemTime = javaTimer();
+        int alertSentHalf =0;
+        int alertSentDue =0;
+        int alertSentTen =0;
         for (int i =0; i<dueDateCSV.length; i++){
             //Calculations
             String newDate = dueDateCSV[i];
@@ -319,16 +321,16 @@ public class App extends Application {
             String currentMinute = String.valueOf(systemTime[4]);
             String currentDate = initialSplit[0]+":"+currentYear+"-"+currentMonth+"-"+currentDay+"-"+currentHour+":"+currentMinute;
             if (currentDate.equals(taskHalfDue)){
-                alertSent +=1;
+                alertSentHalf +=1;
                 File filePath = new File("onHalfDue.csv");
-                FileWriter fw = new FileWriter(filePath);
+                FileWriter fw = new FileWriter(filePath, true);
                 fw.write(taskNameSplit[0] +" at half mark! Be sure to work on it! ");
                 fw.close();
             }
             else if (currentDate.equals(newDate)){
-                alertSent +=1;
+                alertSentDue +=1;
                 File filePath = new File("onDueDate.csv");
-                FileWriter fw = new FileWriter(filePath);
+                FileWriter fw = new FileWriter(filePath, true);
                 fw.write(taskNameSplit[0] + " is Due right now! Hand it in so you are not late! ");
                 fw.close();
             }
@@ -338,21 +340,25 @@ public class App extends Application {
                 //FileWriter fw = new FileWriter(filePath);
                 //fw.write(taskNameSplit[0] + " is due in ten minutes! Should get ready to submit! ");
                 //fw.close();
-            //}
-            
+            //}  
         } 
-        File filePathHalf = new File("onHalfDue.csv");
-        FileWriter fw1 = new FileWriter(filePathHalf);
-        fw1.write("Looking Good! Keep working");
-        File filePathDue = new File("onDueDate.csv");
-        FileWriter fw2 = new FileWriter(filePathDue);
-        fw2.write("Looking Good! No Task Due!");
-        File filePathTen = new File("onTenMinute.csv");
-        FileWriter fw3 = new FileWriter(filePathTen);
-        fw2.write("Looking Good! Nothing due in ten minutes!");
-        fw1.close();
-        fw2.close();
-        fw3.close();  
-               
+        if (alertSentHalf == 0){
+            File filePathHalf = new File("onHalfDue.csv");
+            FileWriter fw1 = new FileWriter(filePathHalf);
+            fw1.write("Looking Good! Keep working");
+            fw1.close();
+        }
+        if (alertSentDue ==0){
+            File filePathDue = new File("onDueDate.csv");
+            FileWriter fw2 = new FileWriter(filePathDue);
+            fw2.write("Looking Good! No Task Due!");
+            fw2.close();
+        }
+        if (alertSentTen ==0){
+            File filePathTen = new File("onTenMinute.csv");
+            FileWriter fw3 = new FileWriter(filePathTen);
+            fw3.write("Looking Good! Nothing due in ten minutes!");
+            fw3.close();
+        }
     }
 }
