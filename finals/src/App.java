@@ -17,9 +17,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.time.ZoneId;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
 
 public class App extends Application {
+
+    private static String addExercise;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -51,7 +54,9 @@ public class App extends Application {
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
         String[] dueDateInput = fileReader();
-        fileWriter(dueDateInput);
+        
+        halfDateWriter(dueDateInput);
+        exerciseWriter(addExercise);
         //tenminutegenerator();
     }
     public static int[] javaTimer(){
@@ -146,7 +151,7 @@ public class App extends Application {
         }
         return task;
     }
-    public static void fileWriter(String[] dueDateCSV) throws IOException {
+    public static void halfDateWriter(String[] dueDateCSV) throws IOException {
         String[] arr = halfDateAlertGenerator(dueDateCSV);
         File filePath = new File("halfalerts.csv");
         try (PrintWriter writer = new PrintWriter(filePath)){
@@ -160,6 +165,14 @@ public class App extends Application {
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+    public static void exerciseWriter(String addExercise) throws IOException{
+        System.out.println(addExercise);
+        File filePath = new File("schedule.csv");
+        FileWriter fw = new FileWriter(filePath, true);
+
+        fw.write(addExercise);
+        fw.close();
     }
 
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
@@ -282,7 +295,7 @@ public class App extends Application {
             String currentMonth = String.valueOf(systemTime[1]);
             String currentDay = String.valueOf(systemTime[2]);
             public void run() {
-                String addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
+                addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
                 //Thanks Kyle
             }
         };
