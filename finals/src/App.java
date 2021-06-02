@@ -37,6 +37,7 @@ public class App extends Application {
     }
     public static void main(String[] args) throws Exception {
         launch(args);
+        String[] dueDateInput = fileReader();
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -48,12 +49,16 @@ public class App extends Application {
                 //Only gets the date when new minute ()
                 if (secondsDueDate%60 == 0){
                     javaTimer();
+                    try {
+                        compareMethods(dueDateInput);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }  
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
-        String[] dueDateInput = fileReader();
         halfDateWriter(dueDateInput);
         timer = new Timer();
         timer.schedule(new TimerTask(){
@@ -120,10 +125,6 @@ public class App extends Application {
                 
                 //Returns as Task Name:Year-Month-Day-Hour:Minute
             }
-            else {
-                
-                
-            }
         } catch (Exception e) {
             System.out.println("ERROR");
         }
@@ -131,7 +132,6 @@ public class App extends Application {
         return foundInformation;
     }
     public static int countLines() {
-
         int lines = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader("schedule.csv"))) {
             while (reader.readLine() != null) lines++;
@@ -233,26 +233,21 @@ public class App extends Application {
         int returnedDay = systemTime[2] + (int)halfAlertDay;
         int returnedHour = systemTime[3] + (int)halfAlertHour;
         int returnedMinute = systemTime[4] + (int)halfAlertMinute;
-        
         if (returnedMinute>60){
             returnedHour += returnedMinute/60;
             returnedMinute = returnedMinute%60;
         }
-        
         if(returnedHour>24){
             returnedDay += returnedHour/24;
             returnedHour = returnedHour%24;
-            
         }
         if(returnedDay >30){
             returnedMonth += returnedDay/30;
-            returnedDay = returnedDay%30;
-            
+            returnedDay = returnedDay%30;     
         }
         if(returnedMonth > 12){
             returnedYear += returnedMonth/12;
             returnedMonth = returnedMonth%12;
-            
         }
         //Returns as Task Name:Year-Month-Day-Hour:Minute
         String returnedArrayDate = taskName +":" + String.valueOf((returnedYear)) + "-"+String.valueOf((returnedMonth))+"-"+String.valueOf((returnedDay))+"-"+String.valueOf((returnedHour))+":"+String.valueOf((returnedMinute));
@@ -275,12 +270,9 @@ public class App extends Application {
             String halfDue = halfAlertCalculations(dueDateFormatted, taskNameSplit[0]);
             halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
             halfTimeArray[halfTimeArray.length - 1] = halfDue;    
-            
         }
         return halfTimeArray;
-        
     }
-    
     public static boolean tenminutegenerator(int dueDateInput[]){
         int[] systemTime= javaTimer();  //Loads the local system time into an array int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         DateTimeFormatter standard = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");  //date formatter
@@ -297,8 +289,6 @@ public class App extends Application {
             return false;  //else return false
         } 
     }
-   
-
     public static void breakNotification(){
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
@@ -310,37 +300,53 @@ public class App extends Application {
         long delay = 25*60*1000;
         long period = 30*60*1000;
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
-
     }
     public static void compareMethods(String[]dueDateCSV) throws IOException {
         int[] systemTime = javaTimer();
-        boolean alwaysRun = true;
-        while (alwaysRun == true) {
-            for (int i =0; i<dueDateCSV.length; i++){
-                //Calculations
-                String newDate = dueDateCSV[i];
-                String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
-                String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
-                String taskHalfDue = fileSearcher(taskNameSplit[0]);
-                //boolean tenMinute = 
-                //Returns as Task Name:Year-Month-Day-Hour:Minute
-                String currentYear = String.valueOf(systemTime[0]);
-                String currentMonth = String.valueOf(systemTime[1]);
-                String currentDay = String.valueOf(systemTime[2]);
-                String currentHour = String.valueOf(systemTime[3]);
-                String currentMinute = String.valueOf(systemTime[4]);
-                String currentDate = initialSplit[0]+":"+currentYear+"-"+currentMonth+"-"+currentDay+"-"+currentHour+":"+currentMinute;
-                if (currentDate.equals(taskHalfDue)){
-                    //Display
-                }
-                if (currentDate.equals(newDate)){
-                    //Display
-                }
-                //if (){ Needs new changes from Patrick 
-
-                //}
-            }   
-        } 
-             
+        for (int i =0; i<dueDateCSV.length; i++){
+            //Calculations
+            String newDate = dueDateCSV[i];
+            String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
+            String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
+            String taskHalfDue= fileSearcher(taskNameSplit[0]);
+            //boolean tenMinute = 
+            //Returns as Task Name:Year-Month-Day-Hour:Minute
+            String currentYear = String.valueOf(systemTime[0]);
+            String currentMonth = String.valueOf(systemTime[1]);
+            String currentDay = String.valueOf(systemTime[2]);
+            String currentHour = String.valueOf(systemTime[3]);
+            String currentMinute = String.valueOf(systemTime[4]);
+            String currentDate = initialSplit[0]+":"+currentYear+"-"+currentMonth+"-"+currentDay+"-"+currentHour+":"+currentMinute;
+            if (currentDate.equals(taskHalfDue)){
+                File filePath = new File("onHalfDue.csv");
+                FileWriter fw = new FileWriter(filePath);
+                fw.write(taskNameSplit[0] +" at half mark! Be sure to work on it! ");
+                fw.close();
+            }
+            else if (currentDate.equals(newDate)){
+                File filePath = new File("onDueDate.csv");
+                FileWriter fw = new FileWriter(filePath);
+                fw.write(taskNameSplit[0] + " is Due! ");
+                fw.close();
+            }
+            //if (){ Needs new changes from Patrick 
+    
+            //}
+            else {
+                File filePathHalf = new File("onHalfDue.csv");
+                FileWriter fw1 = new FileWriter(filePathHalf);
+                fw1.write("Looking Good! Keep working");
+                File filePathDue = new File("onDueDate.csv");
+                FileWriter fw2 = new FileWriter(filePathDue);
+                fw2.write("Looking Good! No Task Due!");
+                File filePathTen = new File("onTenMinute.csv");
+                FileWriter fw3 = new FileWriter(filePathTen);
+                fw2.write("Looking Good! Nothing due in ten minutes!");
+                fw1.close();
+                fw2.close();
+                fw3.close();
+            }
+        }   
+               
     }
 }
