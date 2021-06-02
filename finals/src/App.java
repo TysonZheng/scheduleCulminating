@@ -49,15 +49,11 @@ public class App extends Application {
             }  
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
-        
-        //fileOutput();
-        
+        //fileOutput(); 
         String[] dueDateInput = fileReader();
-        
         fileWriter(dueDateInput);
         //tenminutegenerator();
     }
-    
     public static int[] javaTimer(){
         LocalTime time = LocalTime.now();
         DateTimeFormatter minutes = DateTimeFormatter.ofPattern("mm");
@@ -278,10 +274,16 @@ public class App extends Application {
         } 
     }
     
+    
     public void exerciseNotification() {
         TimerTask repeatedTask = new TimerTask() {
+            int[] systemTime = javaTimer() ;
+            String currentYear = String.valueOf(systemTime[0]);
+            String currentMonth = String.valueOf(systemTime[1]);
+            String currentDay = String.valueOf(systemTime[2]);
             public void run() {
-                //Add Exercise to Task
+                String addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
+                //Thanks Kyle
             }
         };
         Timer timer = new Timer("Timer");
@@ -294,7 +296,7 @@ public class App extends Application {
     public static void breakNotification(){
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
-                //Displays the notication
+                
             }
         };
         Timer timer = new Timer("Timer");
@@ -306,11 +308,6 @@ public class App extends Application {
     }
     public static void compareMethods(String[]dueDateCSV) throws IOException {
         int[] systemTime = javaTimer();
-        String currentYear = String.valueOf(systemTime[0]);
-        String currentMonth = String.valueOf(systemTime[1]);
-        String currentDay = String.valueOf(systemTime[2]);
-        String currentHour = String.valueOf(systemTime[3]);
-        String currentMinute = String.valueOf(systemTime[4]);
         boolean alwaysRun = true;
         while (alwaysRun == true) {
             for (int i =0; i<dueDateCSV.length; i++){
@@ -319,9 +316,23 @@ public class App extends Application {
                 String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
                 String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
                 String taskHalfDue = fileSearcher(taskNameSplit[0]);
-                if (systemTime.equals(taskHalfDue)){
-
+                //boolean tenMinute = 
+                //Returns as Task Name:Year-Month-Day-Hour:Minute
+                String currentYear = String.valueOf(systemTime[0]);
+                String currentMonth = String.valueOf(systemTime[1]);
+                String currentDay = String.valueOf(systemTime[2]);
+                String currentHour = String.valueOf(systemTime[3]);
+                String currentMinute = String.valueOf(systemTime[4]);
+                String currentDate = initialSplit[0]+":"+currentYear+"-"+currentMonth+"-"+currentDay+"-"+currentHour+":"+currentMinute;
+                if (currentDate.equals(taskHalfDue)){
+                    //Display
                 }
+                if (currentDate.equals(newDate)){
+                    //Display
+                }
+                //if (){ Needs new changes from Patrick 
+
+                //}
             }   
         } 
              
