@@ -54,10 +54,17 @@ public class App extends Application {
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
         String[] dueDateInput = fileReader();
-        
         halfDateWriter(dueDateInput);
-        exerciseWriter(addExercise);
-        //tenminutegenerator();
+        timer = new Timer();
+        timer.schedule(new TimerTask(){
+            public void run(){
+                try {
+                    exerciseWriter(addExercise);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }  
+        }, 0, 24*60*1000);
     }
     public static int[] javaTimer(){
         LocalTime time = LocalTime.now();
@@ -167,7 +174,11 @@ public class App extends Application {
         }
     }
     public static void exerciseWriter(String addExercise) throws IOException{
-        System.out.println(addExercise);
+        int[] systemTime = javaTimer() ;
+        String currentYear = String.valueOf(systemTime[0]);
+        String currentMonth = String.valueOf(systemTime[1]);
+        String currentDay = String.valueOf(systemTime[2]);
+        addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
         File filePath = new File("schedule.csv");
         FileWriter fw = new FileWriter(filePath, true);
 
@@ -286,25 +297,7 @@ public class App extends Application {
             return false;  //else return false
         } 
     }
-    
-    
-    public void exerciseNotification() {
-        TimerTask repeatedTask = new TimerTask() {
-            int[] systemTime = javaTimer() ;
-            String currentYear = String.valueOf(systemTime[0]);
-            String currentMonth = String.valueOf(systemTime[1]);
-            String currentDay = String.valueOf(systemTime[2]);
-            public void run() {
-                addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
-                //Thanks Kyle
-            }
-        };
-        Timer timer = new Timer("Timer");
-        
-        long delay = 0;
-        long period = 1000 * 60 * 60 * 24;
-        timer.scheduleAtFixedRate(repeatedTask, delay, period);
-    }
+   
 
     public static void breakNotification(){
         TimerTask repeatedTask = new TimerTask() {
