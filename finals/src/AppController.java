@@ -49,7 +49,7 @@ public class AppController {
         FileWriter fw = new FileWriter(file, true);
 
         fw.write(TASK.getText());
-        fw.write(": ");
+        fw.write(":");
         fw.write(YEAR.getText());
         fw.write("-");
         fw.write(MONTH.getText());
