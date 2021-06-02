@@ -306,6 +306,11 @@ public class App extends Application {
     }
     public static void compareMethods(String[]dueDateCSV) throws IOException {
         int[] systemTime = javaTimer();
+        String currentYear = String.valueOf(systemTime[0]);
+        String currentMonth = String.valueOf(systemTime[1]);
+        String currentDay = String.valueOf(systemTime[2]);
+        String currentHour = String.valueOf(systemTime[3]);
+        String currentMinute = String.valueOf(systemTime[4]);
         boolean alwaysRun = true;
         while (alwaysRun == true) {
             for (int i =0; i<dueDateCSV.length; i++){
@@ -314,7 +319,9 @@ public class App extends Application {
                 String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
                 String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
                 String taskHalfDue = fileSearcher(taskNameSplit[0]);
-                
+                if (systemTime.equals(taskHalfDue)){
+
+                }
             }   
         } 
              
