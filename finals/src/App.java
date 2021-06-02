@@ -51,7 +51,7 @@ public class App extends Application {
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         
         //fileOutput();
-        //Needs input dueDateInput as an int[] as {Year, Month, Day, Hour, Minute} of the due date. 
+        
         String[] dueDateInput = fileReader();
         
         fileWriter(dueDateInput);
@@ -113,7 +113,7 @@ public class App extends Application {
                 //Returns as Task Name:Year-Month-Day-Hour:Minute
             }
             else {
-                System.out.println("TASK NOT FOUND. MAKE SURE YOU INPUTTED THE RIGHT TASK NAME AND THERE ARE ENTRIES IN THE FILE");
+                
                 
             }
         } catch (Exception e) {
@@ -159,7 +159,6 @@ public class App extends Application {
                 System.out.println(arr[i]);
                 sb.append(arr[i]);
                 sb.append("\n");
-                System.out.println("Element " + i + " added to csv");
                 writer.write(sb.toString());
             }
         } catch (FileNotFoundException e) {
@@ -256,38 +255,27 @@ public class App extends Application {
             String halfDue = halfAlertCalculations(dueDateFormatted, taskNameSplit[0]);
             halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
             halfTimeArray[halfTimeArray.length - 1] = halfDue;    
-            System.out.println("TEST: " + halfTimeArray[i]);
+            
         }
         return halfTimeArray;
         
     }
     
     public static boolean tenminutegenerator(int dueDateInput[]){
-
         int[] systemTime= javaTimer();  //Loads the local system time into an array int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
-
         DateTimeFormatter standard = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");  //date formatter
-
         String systemtimedate = systemTime[0] + "/" + systemTime[1] + "/" + systemTime[2] + " " + systemTime[3] + ":" + systemTime[4];
         LocalDateTime localsystDateTime = LocalDateTime.parse(systemtimedate, standard); //return date time
-
         String duedatetimedate = dueDateInput[0] + "/" + dueDateInput[1] + "/" + dueDateInput[2] + " " + dueDateInput[3] + ":" + dueDateInput[4];
         LocalDateTime localduedatetimedate = LocalDateTime.parse(systemtimedate, standard); //return  due date time
-        
         long systemmilli = localsystDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(); //Take local date time add to zone and convert to epochmilli
-
         long systemduedate = localduedatetimedate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(); //Take due date time add to zone and convert to epochmilli
-
         long compare = systemduedate - systemmilli;    //compare the system due date in milliseconds then subtract it with local time. 
-
         if(compare <= 600000){  //600000 miliseconds = 10 minutes
             return true; //if it equal to ten minutes return true
-
         } else {
             return false;  //else return false
- 
-        }
-        
+        } 
     }
     
     public void exerciseNotification() {
@@ -316,7 +304,19 @@ public class App extends Application {
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
 
     }
-    public static void compareMethods(){
-        
+    public static void compareMethods(String[]dueDateCSV) throws IOException {
+        int[] systemTime = javaTimer();
+        boolean alwaysRun = true;
+        while (alwaysRun == true) {
+            for (int i =0; i<dueDateCSV.length; i++){
+                //Calculations
+                String newDate = dueDateCSV[i];
+                String[] initialSplit = newDate.split("-"); //[1]= Month, [2] = Day 
+                String[] taskNameSplit = initialSplit[0].split(":"); //[0] = Task name, [1] = Year
+                String taskHalfDue = fileSearcher(taskNameSplit[0]);
+                
+            }   
+        } 
+             
     }
 }
