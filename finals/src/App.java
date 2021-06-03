@@ -1,3 +1,14 @@
+/*
+Due date: 2021/06/04
+Date: 2021/06/03
+Members: Kyle, Tyson, Morgan, Patrick
+Teacher: Mr. Ho 
+Description: Culminating project. Made a scheduling application with a display, alerts and functionality. It is meant to be able to run throughout periods of time and may be closed. 
+             The user is able to input duedates into a textfield that will be addded/display when the button is pressed. 
+             There is a centralized Java timer that gets the local time that the alerts use. Once there are alerts, they will be displayed in a box along the side. 
+*/
+
+//Importing Java Packages
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.image.Image;
@@ -20,10 +31,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 
+//Class 
 public class App extends Application {
 
-    private static String addExercise;
-
+    //
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -35,8 +46,17 @@ public class App extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
+    /*
+    Method name: main()
+    Description: The place where specific items are called according to a timer tasks which will delay and cycle tasks. 
+                 There are 2 separate timer tasks in the main method, one for exercise which needs to run on a 24 hour cycle and the other for the javaTimer and checking alerts happening every new minute.
+    @author: Tyson, Kyle, Morgan, Patrick 
+    @
+    */
     public static void main(String[] args) throws Exception {
+        //Launches the application
         launch(args);
+        //Calling the fileReader{}
         String[] dueDateInput = fileReader();
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
@@ -51,6 +71,7 @@ public class App extends Application {
                     javaTimer();
                     try {
                         compareMethods(dueDateInput);
+                        
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -64,7 +85,7 @@ public class App extends Application {
         timer.schedule(new TimerTask(){
             public void run(){
                 try {
-                    exerciseWriter(addExercise);
+                    exerciseWriter();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -173,12 +194,12 @@ public class App extends Application {
             System.out.println(e.getMessage());
         }
     }
-    public static void exerciseWriter(String addExercise) throws IOException{
+    public static void exerciseWriter() throws IOException{
         int[] systemTime = javaTimer() ;
         String currentYear = String.valueOf(systemTime[0]);
         String currentMonth = String.valueOf(systemTime[1]);
         String currentDay = String.valueOf(systemTime[2]);
-        addExercise = "Exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
+        String addExercise = "Daily exercise:"+currentYear+"-"+currentMonth+"-"+currentDay+"-" +"23:59";
         File filePath = new File("schedule.csv");
         FileWriter fw = new FileWriter(filePath, true);
 
@@ -196,26 +217,38 @@ public class App extends Application {
         else if (dueDateInput[1]>systemTime[1]){ 
             minuteTotal+= (((dueDateInput[1]-1 -systemTime[1]))*43800);
         }
-        else{
-            minuteTotal += ((12- systemTime[1])+dueDateInput[1]);
+        else if (dueDateInput[0]> systemTime[0] && (((dueDateInput[0] - systemTime[0])*12 - systemTime[1])+dueDateInput[1])>1){
+            minuteTotal += (((12- systemTime[1])+dueDateInput[1])*43800);
         }
         if(dueDateInput[2]>systemTime[2]&&((dueDateInput[1]-systemTime[1])==1)){
             minuteTotal += (((dueDateInput[2] - systemTime[2])+29)*1440);
         }  
         else if(dueDateInput[2]>systemTime[2]){
             minuteTotal += (((dueDateInput[2] - systemTime[2] -1))*1440);
-        }         
+        } 
+        else if(dueDateInput[2]==systemTime[2]){
+            minuteTotal +=0;
+        }        
         else{
             minuteTotal += (((30-systemTime[2])+dueDateInput[2]-1)*1440);
         }    
-        if (dueDateInput[3] > systemTime[3] ){
+        if (dueDateInput[3] > systemTime[3] && ((dueDateInput[2]-systemTime[2])>1)){
             minuteTotal += ((dueDateInput[3] - systemTime[3]+23)*60);
         } 
+        else if (dueDateInput[3]>systemTime[3]){
+            minuteTotal+=((dueDateInput[3] - systemTime[3])*60);
+        }
+        else if (dueDateInput[3] == systemTime[3]){
+            minuteTotal+=0;
+        }
         else{
             minuteTotal += (((23-systemTime[3]) + dueDateInput[3])*60); 
         }         
-        if(dueDateInput[4]> systemTime[4]){
+        if((dueDateInput[4]> systemTime[4]) &&((dueDateInput[3]-systemTime[3])>1)){
             minuteTotal += (dueDateInput[4] - systemTime[4]+60);
+        }
+        else if(dueDateInput[4]>systemTime[4]) {
+            minuteTotal += (dueDateInput[4] - systemTime[4]);
         }
         else{
             minuteTotal += (((60 - systemTime[4]) + dueDateInput[4]));
@@ -226,13 +259,13 @@ public class App extends Application {
         long halfAlertDay = halfAlertTimer/1440 - (halfAlertMonth*30+(halfAlertYears*12)*30);
         long halfAlertHour = halfAlertTimer/(60) - ((halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24);
         long halfAlertMinute = halfAlertTimer- ((halfAlertHour+(halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24)*60);
-        
         //Returned values
         int returnedYear = systemTime[0] + (int)halfAlertYears;
         int returnedMonth = systemTime[1] + (int)halfAlertMonth;
         int returnedDay = systemTime[2] + (int)halfAlertDay;
         int returnedHour = systemTime[3] + (int)halfAlertHour;
         int returnedMinute = systemTime[4] + (int)halfAlertMinute;
+
         if (returnedMinute>60){
             returnedHour += returnedMinute/60;
             returnedMinute = returnedMinute%60;
