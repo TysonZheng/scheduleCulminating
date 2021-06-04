@@ -23,9 +23,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.time.ZoneId;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -95,6 +97,7 @@ public class App extends Application {
         //fileOutput(); 
         scheduleWriter(scheduleFilePath, dueDateFilePath);
         halfDateWriter(dueDateInput);
+        removeTask(dueDateInput);
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -166,7 +169,7 @@ public class App extends Application {
                 }
             }
             if (found) {
-                System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-" + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
+                //System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-" + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
                 foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
             }
         } catch (Exception e) {
@@ -259,10 +262,46 @@ public class App extends Application {
                     fw.append("\n");
                 }
             }
-            System.out.println("Non-duplicate elements added to the destination file");
             fw.close();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public static void removeTask(String[]dueDateCSV) {
+        System.out.println("ONE");
+        for (int i =0; i<dueDateCSV.length; i++){
+            //Calculations
+            System.out.println("TWO");
+            String newDate = dueDateCSV[i];
+            String[] taskArray = splitsString(newDate);
+            String taskName = taskArray[0];
+            int dueYear = Integer.parseInt(taskArray[1]);
+            System.out.println(dueYear);
+            int dueMonth = Integer.parseInt(taskArray[2]);
+            System.out.println(dueMonth);
+            int dueDay = Integer.parseInt(taskArray[3]);
+            System.out.println(dueDay);
+            int dueHour = Integer.parseInt(taskArray[4]);
+            System.out.println(dueHour);
+            int dueMinute = Integer.parseInt(taskArray[5]);
+            System.out.println(dueMinute);
+
+            Calendar c = Calendar.getInstance();
+
+            c.set(Calendar.YEAR, dueYear);
+            c.set(Calendar.MONTH, dueMonth-1);
+            c.set(Calendar.DATE, dueDay-1);
+            c.set(Calendar.HOUR, dueHour);
+            c.set(Calendar.MINUTE, dueMinute);
+            System.out.println("THREE");
+            Date taskDueDate = c.getTime();
+
+            Date currentDate = new Date();
+
+            System.out.println("Current Date " + currentDate);
+            System.out.println("Due Date for " + taskName + " is at " + taskDueDate);
+            System.out.println("Is the due date past today's date?: " + !(taskDueDate.before(currentDate)));
         }
     }
 
