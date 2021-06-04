@@ -369,19 +369,7 @@ public class App extends Application {
         }
         return returnStatement;
     }
-
-    public static void breakNotification(){
-        TimerTask repeatedTask = new TimerTask() {
-            public void run() {
-                
-            }
-        };
-        Timer timer = new Timer("Timer");
-        
-        long delay = 25*60*1000;
-        long period = 30*60*1000;
-        timer.scheduleAtFixedRate(repeatedTask, delay, period);
-    }
+    
     public static void compareMethods(String[]dueDateCSV) throws IOException {
         int[] systemTime = javaTimer();
         
