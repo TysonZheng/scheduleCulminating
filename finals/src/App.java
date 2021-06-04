@@ -130,7 +130,6 @@ public class App extends Application {
         boolean found = false;
         String foundTask = "", foundDay = "", foundMonth = "", foundYear ="", foundHour = "", foundMinute = "";
         String foundInformation = "";
-
         try {
             fileReader = new Scanner(new File(filePath));
             fileReader.useDelimiter("[:\n-]");
@@ -142,7 +141,6 @@ public class App extends Application {
                 foundYear = fileReader.next();
                 foundHour = fileReader.next();
                 foundMinute = fileReader.next();
-
                 if (foundTask.equals(searchTask)) {
                     found = true;
                 }
@@ -150,8 +148,6 @@ public class App extends Application {
             if (found) {
                 System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-" + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
                 foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
-                
-                //Returns as Task Name:Year-Month-Day-Hour:Minute
             }
         } catch (Exception e) {
             System.out.println("ERROR");
@@ -224,7 +220,6 @@ public class App extends Application {
         fw.write("\n");
         fw.close();
     }
-
     public static void csvDuplicator() throws IOException {
         String[] arr = fileReader();
         File filePath = new File("dueDates.csv");
@@ -240,7 +235,6 @@ public class App extends Application {
             System.out.println(e.getMessage());
         }
     }
-
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
