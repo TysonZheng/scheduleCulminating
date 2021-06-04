@@ -295,7 +295,7 @@ public class App extends Application {
             minuteTotal += ((dueDateInput[3] - systemTime[3]+23)*60);
         } 
         else if (dueDateInput[3]>systemTime[3]){
-            minuteTotal+=((dueDateInput[3] - systemTime[3])*60);
+            minuteTotal+=((dueDateInput[3] - systemTime[3]-1)*60);
         }
         else if (dueDateInput[3] == systemTime[3]){
             minuteTotal+=0;
