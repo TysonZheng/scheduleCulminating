@@ -85,11 +85,8 @@ public class App extends Application {
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
-<<<<<<< Updated upstream
         halfDateWriter(dueDateInput);
         csvDuplicator();
-=======
->>>>>>> Stashed changes
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
