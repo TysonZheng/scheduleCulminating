@@ -69,6 +69,12 @@ public class AppController implements Initializable {
     private Button rrefresh;
 
     @FXML
+    private Button complete;
+
+    @FXML 
+    private TextField tcompleted;
+
+    @FXML
     public void onClickGen(ActionEvent E) throws IOException {
         File file = new File("schedule.csv");
         FileWriter fw = new FileWriter(file);
@@ -93,6 +99,19 @@ public class AppController implements Initializable {
         HOUR.clear();
         MINUTE.clear();
         TASK.clear();
+
+        if(2>1) {
+            TASK.setText("ree");
+        }
+    }
+
+    @FXML
+    public void onClickComplete(ActionEvent E) throws IOException{
+        String getcomplete = tcompleted.getText();
+        tcompleted.clear();
+        
+        App complete = new App();
+        complete.fileSearcher(getcomplete);
     }
 
     @FXML
@@ -108,7 +127,7 @@ public class AppController implements Initializable {
     }
 
     @FXML 
-    public void onCLickRefresh(ActionEvent E) {
+    public void onCLickRefresh(ActionEvent E) throws IOException{
         Path fileOHD = Path.of("onHalfDue.csv");
         Path fileODD = Path.of("onDueDate.csv");
         Path fileOTM = Path.of("onTenMinute.csv");
@@ -143,3 +162,5 @@ public class AppController implements Initializable {
         } 
     }
 }
+
+
