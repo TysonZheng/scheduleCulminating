@@ -54,10 +54,12 @@ public class App extends Application {
     @
     */
     public static void main(String[] args) throws Exception {
+        String scheduleFilePath = "schedule.csv";
+        String halfFilePath = "halfalerts.csv";
         //Launches the application
         launch(args);
         //Calling the fileReader{}
-        String[] dueDateInput = fileReader();
+        String[] dueDateInput = fileReader(scheduleFilePath);
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -76,8 +78,8 @@ public class App extends Application {
                         e.printStackTrace();
                     }
                 }
-                int changeInLines = countLinesSchedule();
-                int halfLines = countLinesHalf();
+                int changeInLines = countLines(scheduleFilePath);
+                int halfLines = countLines(halfFilePath);
                 if (changeInLines != halfLines){
                     halfDateAlertGenerator(dueDateInput);
                 }
@@ -86,7 +88,7 @@ public class App extends Application {
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
         halfDateWriter(dueDateInput);
-        csvDuplicator();
+        csvDuplicator(scheduleFilePath);
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -123,6 +125,18 @@ public class App extends Application {
         int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
         return systemTime;
     }
+    /* Method Name: fileSearcher()
+     * Description: A method that searches for a specific task stored in a csv. 
+     *              It does this by comparing the task name you're looking for with every task name stored in the csv file. 
+     *              It will take each token for that task and store them in their own respective variables.
+     *              For example, if you want to find a task named "Math Test", it will find the matching task and it's dates. The token, "Math Test" will be stored in its respective variable.
+     * 
+     * @param searchTask - The string variable that stores the specific task the user is looking for.
+     * 
+     * @returns foundInformation - A string variable that combines and stores each variable holding the found csv information. 
+     * 
+     * @author: Kyle
+     */
     public static String fileSearcher(String searchTask) throws IOException{
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
@@ -155,33 +169,23 @@ public class App extends Application {
         reader.close();
         return foundInformation;
     }
-    public static int countLinesSchedule() {
+    public static int countLines(String file) {
         int lines = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader("schedule.csv"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while (reader.readLine() != null) lines++;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return lines;
-  
     }
-    public static int countLinesHalf() {
-        int lines = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader("halfalerts.csv"))) {
-            while (reader.readLine() != null) lines++;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return lines;
-  
-    }
-    public static String[] fileReader() throws IOException {
+
+    public static String[] fileReader(String file) throws IOException {
         String line = "";
-        int numOfLines = countLinesSchedule();
+        int numOfLines = countLines(file);
         String task[] = new String[numOfLines];
         int counter = 0;
         try {
-            BufferedReader csvReader = new BufferedReader(new FileReader("schedule.csv"));
+            BufferedReader csvReader = new BufferedReader(new FileReader(file));
             while ((line = csvReader.readLine()) != null) {
                 task[counter] = line;
                 counter++;
@@ -220,8 +224,8 @@ public class App extends Application {
         fw.write("\n");
         fw.close();
     }
-    public static void csvDuplicator() throws IOException {
-        String[] arr = fileReader();
+    public static void csvDuplicator(String file) throws IOException {
+        String[] arr = fileReader(file);
         File filePath = new File("dueDates.csv");
         try (PrintWriter writer = new PrintWriter(filePath)){
             for (int i = 0; i < arr.length; i++) {
