@@ -76,7 +76,7 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickGen(ActionEvent E) throws IOException {
-        File file = new File("schedule.csv");
+        File file = new File("dueDates.csv");
         FileWriter fw = new FileWriter(file);
 
         fw.write(TASK.getText());
@@ -121,7 +121,7 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickDisplay(ActionEvent E) throws IOException {
-        Path fileN = Path.of("schedule.csv");
+        Path fileN = Path.of("dueDates.csv");
         String text = Files.readString(fileN);
         tarea.appendText(text);
     }

@@ -56,6 +56,7 @@ public class App extends Application {
     public static void main(String[] args) throws Exception {
         String scheduleFilePath = "schedule.csv";
         String halfFilePath = "halfalerts.csv";
+        String dueDateFilePath = "dueDates.csv";
         //Launches the application
         launch(args);
         //Calling the fileReader{}
@@ -87,13 +88,13 @@ public class App extends Application {
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
+        scheduleWriter(scheduleFilePath, dueDateFilePath);
         halfDateWriter(dueDateInput);
-        csvDuplicator(scheduleFilePath);
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
                 try {
-                    exerciseWriter();
+                    exerciseWriter(scheduleFilePath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -202,7 +203,6 @@ public class App extends Application {
         try (PrintWriter writer = new PrintWriter(filePath)){
             for (int i = 0; i < arr.length; i++) {
                 StringBuilder sb = new StringBuilder();
-                System.out.println(arr[i]);
                 sb.append(arr[i]);
                 sb.append("\n");
                 writer.write(sb.toString());
@@ -211,8 +211,9 @@ public class App extends Application {
             System.out.println(e.getMessage());
         }
     }
-    public static void exerciseWriter() throws IOException{
+    public static void exerciseWriter(String destinationFile) throws IOException{
         int[] systemTime = javaTimer() ;
+        String[] currentTasks = fileReader(destinationFile);
         String currentYear = String.valueOf(systemTime[0]);
         String currentMonth = String.valueOf(systemTime[1]);
         String currentDay = String.valueOf(systemTime[2]);
@@ -220,25 +221,49 @@ public class App extends Application {
         File filePath = new File("schedule.csv");
         FileWriter fw = new FileWriter(filePath, true);
 
-        fw.write(addExercise);
-        fw.write("\n");
-        fw.close();
-    }
-    public static void csvDuplicator(String file) throws IOException {
-        String[] arr = fileReader(file);
-        File filePath = new File("dueDates.csv");
-        try (PrintWriter writer = new PrintWriter(filePath)){
-            for (int i = 0; i < arr.length; i++) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(arr[i]);
-                sb.append("\n");
-                writer.write(sb.toString());
+        boolean add = true;
+        for (int i = 0; i < currentTasks.length; i++) {
+            if (addExercise.equals(currentTasks[i])) {
+                System.out.println(addExercise + " Is a duplicate of " + currentTasks[i] + ". It will not be added to schedule.csv");
+                add = false;
             }
-            System.out.println("CSV COPIED");
+        }
+        if (add == true) {   
+            System.out.println("You do not have exercise listed today. Daily Exercise task has been added to your schedule");
+            fw.write(addExercise);
+            fw.write("\n");
+            fw.close();
+        }
+    }
+    public static void scheduleWriter(String destinationFile, String addElementFile) throws IOException {
+        String[] currentTasks = fileReader(destinationFile); //Elements from the destination file
+        String[] toBeAdded = fileReader(addElementFile); //Elements from the file you're adding
+        File filePath = new File(destinationFile);  //The file you're writing to
+        FileWriter fw = new FileWriter(filePath, true); //Will write to schedule.csv
+        boolean add;
+
+        try {
+            for (int e = 0; e < toBeAdded.length; e++) {
+                add = true;
+                for (int i = 0; i < currentTasks.length; i++) {
+                    if (toBeAdded[e].equals(currentTasks[i])) {
+                        System.out.println(toBeAdded[e] + " Is a duplicate of " + currentTasks[i] + ". It will not be added to schedule.csv");
+                        add = false;
+                    }
+                }
+                if (add == true) {  
+                    System.out.println(toBeAdded[e] + " has no duplicates. It will be added to schedule.csv");
+                    fw.append(toBeAdded[e]);    
+                    fw.append("\n");
+                }
+            }
+            System.out.println("Non-duplicate elements added to the destination file");
+            fw.close();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
+
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
