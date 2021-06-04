@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 //Class 
 public class App extends Application {
@@ -95,9 +96,10 @@ public class App extends Application {
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
+        removeTask();
         scheduleWriter(scheduleFilePath, dueDateFilePath);
         halfDateWriter(dueDateInput);
-        compareDate(dueDateInput);
+        
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -266,11 +268,11 @@ public class App extends Application {
         }
     }
 
-    public static boolean[] compareDate(String[]dueDateCSV) {
-        boolean[] pastDue = new boolean[dueDateCSV.length];
-        for (int i =0; i<dueDateCSV.length; i++){
+    public static boolean[] compareDate(String[]taskCSV) {
+        boolean[] pastDue = new boolean[taskCSV.length];
+        for (int i =0; i<taskCSV.length; i++){
             //Calculations
-            String newDate = dueDateCSV[i];
+            String newDate = taskCSV[i];
             String[] taskArray = splitsString(newDate);
             String taskName = taskArray[0];
             int dueYear = Integer.parseInt(taskArray[1]);
@@ -298,6 +300,48 @@ public class App extends Application {
             pastDue[i] = taskDueDate.before(currentDate);
         }
         return pastDue;
+    }
+
+    public static void removeTask() throws IOException{
+        Scanner fileReader;
+        Scanner reader = new Scanner(System.in);
+        String filePath = "schedule.csv";
+        String tempFile = "temp.csv";
+        String foundTask = "", foundDay = "", foundMonth = "", foundYear ="", foundHour = "", foundMinute = "";
+        String foundInformation = "";
+        String searchTask = "QUIZ";
+        File oldFile = new File (filePath);
+        File newFile = new File (tempFile);
+        try {
+            FileWriter fw = new FileWriter(tempFile, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
+            fileReader = new Scanner(new File(filePath));
+            fileReader.useDelimiter("[:\n-]");
+
+            while (fileReader.hasNext()){
+                foundTask = fileReader.next();
+                foundYear = fileReader.next();
+                foundMonth = fileReader.next();
+                foundDay = fileReader.next();
+                foundHour = fileReader.next();
+                foundMinute = fileReader.next();
+                if (!foundTask.equals(searchTask)) {
+                    foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
+                    System.out.println(foundInformation);
+                    pw.println(foundInformation);
+                }
+            }
+            fileReader.close();
+            pw.flush();
+            pw.close();
+            oldFile.delete();
+            File dump = new File(filePath);
+            newFile.renameTo(dump);
+        }catch (Exception e) {
+            
+        }
+        reader.close();
     }
 
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
