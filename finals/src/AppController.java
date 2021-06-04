@@ -1,18 +1,22 @@
+import java.io.*;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
-public class AppController {
-    
+
+public class AppController implements Initializable {
     @FXML
     private Button GENERATE;
 
@@ -36,7 +40,7 @@ public class AppController {
 
     @FXML
     private Button EXIT;
-    
+
     @FXML
     private TextArea tarea;
 
@@ -44,9 +48,30 @@ public class AppController {
     private Button refresh;
 
     @FXML 
-    public void onClickGen(ActionEvent E) throws IOException{
+    private TextArea upcoming;
+
+    @FXML
+    private TextArea tenM;  
+
+    @FXML
+    private Label TENL;
+
+    @FXML
+    private Label HL;
+
+    @FXML
+    private Label DD;
+
+    @FXML
+    private TextArea halfTime;
+
+    @FXML 
+    private Button rrefresh;
+
+    @FXML
+    public void onClickGen(ActionEvent E) throws IOException {
         File file = new File("schedule.csv");
-        FileWriter fw = new FileWriter(file, true);
+        FileWriter fw = new FileWriter(file);
 
         fw.write(TASK.getText());
         fw.write(":");
@@ -74,15 +99,47 @@ public class AppController {
     public void onClickExit(ActionEvent E) throws IOException {
         Platform.exit();
     }
-    
+
     @FXML
-    public void onClickRefresh(ActionEvent E) throws IOException {
+    public void onClickDisplay(ActionEvent E) throws IOException {
         Path fileN = Path.of("schedule.csv");
         String text = Files.readString(fileN);
-            while(text != null) {
-                tarea.setText(text + "\n");
-            }
-            System.out.println(text);
+        tarea.appendText(text);
     }
 
+    @FXML 
+    public void onCLickRefresh(ActionEvent E) {
+        Path fileOHD = Path.of("onHalfDue.csv");
+        Path fileODD = Path.of("onDueDate.csv");
+        Path fileOTM = Path.of("onTenMinute.csv");
+
+        try {
+            String textOHD = Files.readString(fileOHD);
+            halfTime.appendText(textOHD);
+            String textODD = Files.readString(fileODD);
+            upcoming.appendText(textODD);
+            String textOTM = Files.readString(fileOTM);
+            tenM.appendText(textOTM);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        Path fileOHD = Path.of("onHalfDue.csv");
+        Path fileODD = Path.of("onDueDate.csv");
+        Path fileOTM = Path.of("onTenMinute.csv");
+
+        try {
+            String textOHD = Files.readString(fileOHD);
+            halfTime.appendText(textOHD);
+            String textODD = Files.readString(fileODD);
+            upcoming.appendText(textODD);
+            String textOTM = Files.readString(fileOTM);
+            tenM.appendText(textOTM);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+    }
 }

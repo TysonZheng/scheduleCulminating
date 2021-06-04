@@ -76,12 +76,20 @@ public class App extends Application {
                         e.printStackTrace();
                     }
                 }
+                int changeInLines = countLinesSchedule();
+                int halfLines = countLinesHalf();
+                if (changeInLines != halfLines){
+                    halfDateAlertGenerator(dueDateInput);
+                }
             }  
         }, 0, 1000);
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
+<<<<<<< Updated upstream
         halfDateWriter(dueDateInput);
         csvDuplicator();
+=======
+>>>>>>> Stashed changes
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -92,6 +100,7 @@ public class App extends Application {
                 }
             }  
         }, 0, 24*60*1000);
+        
     }
     public static int[] javaTimer(){
         LocalTime time = LocalTime.now();
@@ -153,7 +162,7 @@ public class App extends Application {
         reader.close();
         return foundInformation;
     }
-    public static int countLines() {
+    public static int countLinesSchedule() {
         int lines = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader("schedule.csv"))) {
             while (reader.readLine() != null) lines++;
@@ -163,9 +172,19 @@ public class App extends Application {
         return lines;
   
     }
+    public static int countLinesHalf() {
+        int lines = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader("halfalerts.csv"))) {
+            while (reader.readLine() != null) lines++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+  
+    }
     public static String[] fileReader() throws IOException {
         String line = "";
-        int numOfLines = countLines();
+        int numOfLines = countLinesSchedule();
         String task[] = new String[numOfLines];
         int counter = 0;
         try {
