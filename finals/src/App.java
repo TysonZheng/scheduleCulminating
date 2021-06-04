@@ -81,6 +81,7 @@ public class App extends Application {
         //fileInput(), fileOutput() and all alerts will happen when announcement will be submitted
         //fileOutput(); 
         halfDateWriter(dueDateInput);
+        csvDuplicator();
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -204,7 +205,24 @@ public class App extends Application {
         FileWriter fw = new FileWriter(filePath, true);
 
         fw.write(addExercise);
+        fw.write("\n");
         fw.close();
+    }
+
+    public static void csvDuplicator() throws IOException {
+        String[] arr = fileReader();
+        File filePath = new File("dueDates.csv");
+        try (PrintWriter writer = new PrintWriter(filePath)){
+            for (int i = 0; i < arr.length; i++) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(arr[i]);
+                sb.append("\n");
+                writer.write(sb.toString());
+            }
+            System.out.println("CSV COPIED");
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
