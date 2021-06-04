@@ -97,7 +97,7 @@ public class App extends Application {
         //fileOutput(); 
         scheduleWriter(scheduleFilePath, dueDateFilePath);
         halfDateWriter(dueDateInput);
-        removeTask(dueDateInput);
+        compareDate(dueDateInput);
         timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -229,7 +229,6 @@ public class App extends Application {
         boolean add = true;
         for (int i = 0; i < currentTasks.length; i++) {
             if (addExercise.equals(currentTasks[i])) {
-                System.out.println(addExercise + " Is a duplicate of " + currentTasks[i] + ". It will not be added to schedule.csv");
                 add = false;
             }
         }
@@ -252,7 +251,6 @@ public class App extends Application {
                 add = true;
                 for (int i = 0; i < currentTasks.length; i++) {
                     if (toBeAdded[e].equals(currentTasks[i])) {
-                        System.out.println(toBeAdded[e] + " Is a duplicate of " + currentTasks[i] + ". It will not be added to schedule.csv");
                         add = false;
                     }
                 }
@@ -268,41 +266,38 @@ public class App extends Application {
         }
     }
 
-    public static void removeTask(String[]dueDateCSV) {
-        System.out.println("ONE");
+    public static boolean[] compareDate(String[]dueDateCSV) {
+        boolean[] pastDue = new boolean[dueDateCSV.length];
         for (int i =0; i<dueDateCSV.length; i++){
             //Calculations
-            System.out.println("TWO");
             String newDate = dueDateCSV[i];
             String[] taskArray = splitsString(newDate);
             String taskName = taskArray[0];
             int dueYear = Integer.parseInt(taskArray[1]);
-            System.out.println(dueYear);
             int dueMonth = Integer.parseInt(taskArray[2]);
-            System.out.println(dueMonth);
             int dueDay = Integer.parseInt(taskArray[3]);
-            System.out.println(dueDay);
             int dueHour = Integer.parseInt(taskArray[4]);
-            System.out.println(dueHour);
             int dueMinute = Integer.parseInt(taskArray[5]);
-            System.out.println(dueMinute);
 
             Calendar c = Calendar.getInstance();
 
             c.set(Calendar.YEAR, dueYear);
             c.set(Calendar.MONTH, dueMonth-1);
-            c.set(Calendar.DATE, dueDay-1);
-            c.set(Calendar.HOUR, dueHour);
+            c.set(Calendar.DATE, dueDay);
+            c.set(Calendar.HOUR_OF_DAY, dueHour);
             c.set(Calendar.MINUTE, dueMinute);
-            System.out.println("THREE");
+            c.set(Calendar.SECOND, 0);
+
             Date taskDueDate = c.getTime();
 
             Date currentDate = new Date();
 
             System.out.println("Current Date " + currentDate);
             System.out.println("Due Date for " + taskName + " is at " + taskDueDate);
-            System.out.println("Is the due date past today's date?: " + !(taskDueDate.before(currentDate)));
+            System.out.println("Is " + taskName + " due?: " + taskDueDate.before(currentDate));
+            pastDue[i] = taskDueDate.before(currentDate);
         }
+        return pastDue;
     }
 
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
