@@ -78,31 +78,43 @@ public class AppController implements Initializable {
     public void onClickGen(ActionEvent E) throws IOException {
         File file = new File("dueDates.csv");
         FileWriter fw = new FileWriter(file);
+        if(TASK==null) {
+            TASK.setPromptText("Invalid");
+        }
+        String[] newTaskDue = {TASK.getText(),YEAR.getText(),MONTH.getText(),DATE.getText(),HOUR.getText(),MINUTE.getText()};
+        App complete = new App();
+        int[] integerForTask = complete.integerDueDate(newTaskDue);
+        boolean pastTask = complete.validatingTaskTime(integerForTask);
+        if (pastTask ==true){
+            fw.write(TASK.getText());
+            fw.write(":");
+            fw.write(YEAR.getText());
+            fw.write("-");
+            fw.write(MONTH.getText());
+            fw.write("-");
+            fw.write(DATE.getText());
+            fw.write("-");
+            fw.write(HOUR.getText());
+            fw.write(":");
+            fw.write(MINUTE.getText());
+            fw.write("\n");
+            fw.close();
+        }
+        else{
+            TASK.setPromptText("Invalid");
+            YEAR.setPromptText("Invalid");
+            MONTH.setPromptText("Invalid");
+            DATE.setPromptText("Invalid");
+            HOUR.setPromptText("Invalid");
+            MINUTE.setPromptText("Invalid");
 
-        fw.write(TASK.getText());
-        fw.write(":");
-        fw.write(YEAR.getText());
-        fw.write("-");
-        fw.write(MONTH.getText());
-        fw.write("-");
-        fw.write(DATE.getText());
-        fw.write("-");
-        fw.write(HOUR.getText());
-        fw.write(":");
-        fw.write(MINUTE.getText());
-        fw.write("\n");
-        fw.close();
-
+        }
         YEAR.clear();
         MONTH.clear();
         DATE.clear();
         HOUR.clear();
         MINUTE.clear();
         TASK.clear();
-
-        if(2>1) {
-            TASK.setText("ree");
-        }
     }
 
     @FXML
@@ -111,7 +123,7 @@ public class AppController implements Initializable {
         tcompleted.clear();
         
         App complete = new App();
-        complete.fileSearcher(getcomplete);
+        complete.removeTask(getcomplete);
     }
 
     @FXML
@@ -121,25 +133,29 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickDisplay(ActionEvent E) throws IOException {
-        Path fileN = Path.of("dueDates.csv");
+        Path fileN = Path.of("schedule.csv");
         String text = Files.readString(fileN);
         tarea.appendText(text);
     }
 
     @FXML 
     public void onCLickRefresh(ActionEvent E) throws IOException{
+        halfTime.clear();
+        upcoming.clear();
+        tenM.clear();
+        
         Path fileOHD = Path.of("onHalfDue.csv");
         Path fileODD = Path.of("onDueDate.csv");
-        Path fileOTM = Path.of("onTenMinute.csv");
+        // Path fileOTM = Path.of("onTenMinute.csv");
 
         try {
             String textOHD = Files.readString(fileOHD);
             halfTime.appendText(textOHD);
             String textODD = Files.readString(fileODD);
             upcoming.appendText(textODD);
-            String textOTM = Files.readString(fileOTM);
-            tenM.appendText(textOTM);
-        } catch (IOException e) {
+            // String textOTM = Files.readString(fileOTM);
+            // tenM.appendText(textOTM);
+        } catch (IOException e) {   
             e.printStackTrace();
         }
     }
@@ -148,19 +164,17 @@ public class AppController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Path fileOHD = Path.of("onHalfDue.csv");
         Path fileODD = Path.of("onDueDate.csv");
-        Path fileOTM = Path.of("onTenMinute.csv");
+        // Path fileOTM = Path.of("onTenMinute.csv");
 
         try {
             String textOHD = Files.readString(fileOHD);
             halfTime.appendText(textOHD);
             String textODD = Files.readString(fileODD);
             upcoming.appendText(textODD);
-            String textOTM = Files.readString(fileOTM);
-            tenM.appendText(textOTM);
+            // String textOTM = Files.readString(fileOTM);
+            // tenM.appendText(textOTM);
         } catch (IOException e) {
             e.printStackTrace();
         } 
     }
 }
-
-
