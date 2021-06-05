@@ -37,7 +37,9 @@ import java.io.BufferedWriter;
 //Class 
 public class App extends Application {
 
-    //
+    /*
+    Starts java fx
+    */
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -87,11 +89,8 @@ public class App extends Application {
                 //Formats for the seconds
                 DateTimeFormatter second= DateTimeFormatter.ofPattern("ss"); 
                 String secondsInString = time.format(second); 
-                //Converts seconds to integer
-                int secondsDueDate = Integer.parseInt(secondsInString);
                 //Declares the array to store the tasks in CSV
                 String[] dueDateInput = new String[dueLines];
-                
                 //Trys 
                 try {
                     //Rewrites the schedule CSV
@@ -442,114 +441,191 @@ public class App extends Application {
     */
 
     public static String halfAlertCalculations(int[] dueDateInput, String taskName) {
-        // systemTime = {Year, month, day, hour, minute}
+        //Gets local time
         int[] systemTime = javaTimer();
+        //Gets the total minutes
         long minuteTotal = totalMinutes(dueDateInput);
+        //Divides minutes by half
         long halfAlertTimer = minuteTotal / 2;
+        //Calculates the years
         long halfAlertYears = (halfAlertTimer / 525600);
+        //Calculates the month
         long halfAlertMonth = halfAlertTimer / 43800 - (halfAlertYears * 12);
+        //Calculates the day
         long halfAlertDay = halfAlertTimer / 1440 - (halfAlertMonth * 30 + (halfAlertYears * 12) * 30);
-        long halfAlertHour = halfAlertTimer / (60)
-                - ((halfAlertDay + halfAlertMonth * 30 + (halfAlertYears * 12) * 30) * 24);
-        long halfAlertMinute = halfAlertTimer
-                - ((halfAlertHour + (halfAlertDay + halfAlertMonth * 30 + (halfAlertYears * 12) * 30) * 24) * 60);
-        // Returned values
+        //Calculates hours
+        long halfAlertHour = halfAlertTimer / (60)- ((halfAlertDay + halfAlertMonth * 30 + (halfAlertYears * 12) * 30) * 24);
+        //Calculates minutes
+        long halfAlertMinute = halfAlertTimer - ((halfAlertHour + (halfAlertDay + halfAlertMonth * 30 + (halfAlertYears * 12) * 30) * 24) * 60);
+        //Gets the half date by adding calculated values
         int returnedYear = systemTime[0] + (int) halfAlertYears;
         int returnedMonth = systemTime[1] + (int) halfAlertMonth;
         int returnedDay = systemTime[2] + (int) halfAlertDay;
         int returnedHour = systemTime[3] + (int) halfAlertHour;
         int returnedMinute = systemTime[4] + (int) halfAlertMinute;
+        //Rounds and logic checks
+        //If minute over 60
         if (returnedMinute > 60) {
+            //Adds hour
             returnedHour += returnedMinute / 60;
+            //Gets minute
             returnedMinute = returnedMinute % 60;
         }
+        //If hour over 24
         if (returnedHour > 24) {
+            //Adds day
             returnedDay += returnedHour / 24;
+            //Gets hour
             returnedHour = returnedHour % 24;
         }
+        //If day over 30
         if (returnedDay > 30) {
+            //Adds month
             returnedMonth += returnedDay / 30;
+            //Gets day
             returnedDay = returnedDay % 30;
         }
+        //If month over 12
         if (returnedMonth > 12) {
+            //Add year
             returnedYear += returnedMonth / 12;
+            //Gets months
             returnedMonth = returnedMonth % 12;
         }
-        // Returns as Task Name:Year-Month-Day-Hour:Minute
+        // Returns as Task Name:Year-Month-Day-Hour:Minute in format
         String returnedArrayDate = taskName + ":" + String.valueOf((returnedYear)) + "-"
                 + String.valueOf((returnedMonth)) + "-" + String.valueOf((returnedDay)) + "-"
                 + String.valueOf((returnedHour)) + ":" + String.valueOf((returnedMinute));
         return returnedArrayDate;
     }
-
+    /*
+    Method Name: halfDateAlertGenerator()
+    Description: Gets the value of half due date and turns into String values to be stored in a String array.
+                 The returned value will be used in writing the halfalerts.csv
+    @author: Tyson
+    @param: dueDueCSV (String[] with the due dates)
+    @return: halfTimeArray (The string array with all the half times)
+    */
     public static String[] halfDateAlertGenerator(String[] dueDateCSV) {
+        //Initialize halfTimeArray
         String[] halfTimeArray = new String[0];
+        //For loop to look through each task 
         for (int i = 0; i < dueDateCSV.length; i++) {
-            // Calculations
+            //Gets one task 
             String newDate = dueDateCSV[i];
+            //Splits the task
             String[] taskArray = splitsString(newDate);
+            //Converts to integers
             int[] dueDateInteger = integerDueDate(taskArray);
+            //Calls halfAlertCalculations
             String halfDue = halfAlertCalculations(dueDateInteger, taskArray[0]);
+            //Adds the String to string array
             halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
             halfTimeArray[halfTimeArray.length - 1] = halfDue;
         }
         return halfTimeArray;
     }
+    /*
+    Method name: integerDueDate()
+    Description: Turns string array of due dates to integer
+    @author: Tyson
+    @param: stringDue (String array of due date)
+    @returns: dueDateFromatted(int[] converted date)
 
+    */
     public static int[] integerDueDate(String[] stringDue) {
+        //Converts to integer
         int year = Integer.parseInt(stringDue[1]);
         int month = Integer.parseInt(stringDue[2]);
         int day = Integer.parseInt(stringDue[3]);
         int hour = Integer.parseInt(stringDue[4]);
         int minute = Integer.parseInt(stringDue[5]);
+        //Returns in int[]
         int[] dueDateFormatted = { year, month, day, hour, minute };
         return dueDateFormatted;
     }
-
+    /*
+    Method Name: totalMinutes
+    Description: Calculates the total minutes in between due date and the current time. Will return an integer of the total minutes
+    @author: Tyson 
+    @param: dueDateInput(The due date as int[])
+    @return: minuteTotal (Long - returns the total minutes as calculated)
+    */
     public static long totalMinutes(int[] dueDateInput) {
+        //Local time
         int[] systemTime = javaTimer();
+        //Initializes minuteTotal
         long minuteTotal = 0;
-        if ((dueDateInput[0] > systemTime[0])
-                && ((((dueDateInput[0] - systemTime[0]) * 12 - systemTime[1]) + dueDateInput[1]) > 12)) {
+        //If year of due is larger and months greater than a year
+        if ((dueDateInput[0] > systemTime[0]) && ((((dueDateInput[0] - systemTime[0]) * 12 - systemTime[1]) + dueDateInput[1]) > 12)) {
+            //Gets the minutes of the year, month -1 
             minuteTotal += ((((dueDateInput[0] - systemTime[0]) * 12 - systemTime[1]) + (dueDateInput[1] - 1)) * 43800);
-        } else if (dueDateInput[1] > systemTime[1]) {
-            minuteTotal += (((dueDateInput[1] - 1 - systemTime[1])) * 43800);
-        } else if (dueDateInput[0] > systemTime[0]
-                && (((dueDateInput[0] - systemTime[0]) * 12 - systemTime[1]) + dueDateInput[1]) > 1) {
+        //If year greater and month less than a full year
+        } else if (dueDateInput[0] > systemTime[0] && (((dueDateInput[0] - systemTime[0]) * 12 - systemTime[1]) + dueDateInput[1]) > 1) {
+            //Gets the month in minutes
             minuteTotal += (((12 - systemTime[1]) + dueDateInput[1]) * 43800);
         }
+        //If month is just greater
+        else if (dueDateInput[1] > systemTime[1]) {
+            //Gets the values for month in minutes
+            minuteTotal += (((dueDateInput[1] - 1 - systemTime[1])) * 43800);
+        } 
+        //If day is greater and there is a difference of one month
         if (dueDateInput[2] > systemTime[2] && ((dueDateInput[1] - systemTime[1]) == 1)) {
+            //Gets the days -1 in minutes for month
             minuteTotal += (((dueDateInput[2] - systemTime[2]) + 29) * 1440);
+        //If day is greater
         } else if (dueDateInput[2] > systemTime[2]) {
+            //Gets the months -1 in minutes
             minuteTotal += (((dueDateInput[2] - systemTime[2] - 1)) * 1440);
+        //If same day
         } else if (dueDateInput[2] == systemTime[2]) {
+            //Nothing
             minuteTotal += 0;
+        //Else
         } else {
+            //Gets the minutes in days
             minuteTotal += (((30 - systemTime[2]) + dueDateInput[2] - 1) * 1440);
         }
+        //If hour greater and day greater than 1
         if (dueDateInput[3] > systemTime[3] && ((dueDateInput[2] - systemTime[2]) > 1)) {
+             
             minuteTotal += ((dueDateInput[3] - systemTime[3] + 23) * 60);
+        //If hour greater
         } else if (dueDateInput[3] > systemTime[3]) {
             minuteTotal += ((dueDateInput[3] - systemTime[3] - 1) * 60);
+        //If hour the same
         } else if (dueDateInput[3] == systemTime[3]) {
             minuteTotal += 0;
+        //Else
         } else {
             minuteTotal += (((23 - systemTime[3]) + dueDateInput[3]) * 60);
         }
+        //If minutes greater and hours above 1
         if ((dueDateInput[4] > systemTime[4]) && ((dueDateInput[3] - systemTime[3]) > 1)) {
             minuteTotal += (dueDateInput[4] - systemTime[4] + 60);
+        //If minutes less and hours greater
         } else if (dueDateInput[4] < systemTime[4] && (dueDateInput[3] > systemTime[3])) {
             minuteTotal += (((60 - systemTime[4]) + dueDateInput[4]));
+        //If minutes greater
         } else if (dueDateInput[4] > systemTime[4]) {
             minuteTotal += (dueDateInput[4] - systemTime[4]);
         }
+        //Returns minutes
         return minuteTotal;
     }
-
+    /*
+    Method Name: splitsString()
+    Description: Gets the values in the string to be in an array
+    @author: Tyson 
+    @param: dueDate (String of due date)
+    @return: returnDate (Date in array)
+    */
     public static String[] splitsString(String dueDate) {
         String[] initialSplit = dueDate.split("-"); // [1]= Month, [2] = Day
         String[] taskNameSplit = initialSplit[0].split(":"); // [0] = Task name, [1] = Year
         String[] timeSplit = initialSplit[3].split(":");// [0] = Hour, [1] = Minute
+        //Stores in string array
         String[] returnDate = { taskNameSplit[0], taskNameSplit[1], initialSplit[1], initialSplit[2], timeSplit[0],
                 timeSplit[1] };
         return returnDate;
@@ -588,8 +664,17 @@ public class App extends Application {
      * true; //if it equal to ten minutes return true } else { returnStatement=
      * false; //else return false } return returnStatement; }
      */
+
+    /*
+    Method name: javaTimerString()
+    Description: Turns local time to string
+    @author: Tyson
+    @return: timerAsString (String array of local time)
+    */
     public static String[] javaTimerString() {
+        //Local tie 
         int[] systemTime = javaTimer();
+        //Current time as string 
         String currentYear = String.valueOf(systemTime[0]);
         String currentMonth = String.valueOf(systemTime[1]);
         String currentDay = String.valueOf(systemTime[2]);
@@ -598,8 +683,14 @@ public class App extends Application {
         String[] timerAsString = { currentYear, currentMonth, currentDay, currentHour, currentMinute };
         return timerAsString;
     }
-
+    /*
+    Method name: compareMethods()
+    Description: Checks if alerts should be heading off
+    @author: Tyson 
+    @param: dueDateCSV (String[] of the due dates )
+    */
     public static void compareMethods(String[] dueDateCSV) throws IOException {
+        //Initialize 
         int alertSentHalf = 0;
         int alertSentDue = 0;
         String filePath = "";
@@ -608,13 +699,16 @@ public class App extends Application {
         for (int i = 0; i < dueDateCSV.length; i++) {
             // Calculations
             String newDate = dueDateCSV[i];
+            //Gets the values
             String[] taskNameSplit = splitsString(newDate);
+            //Searchers for task 
             String taskHalfDue = fileSearcher(taskNameSplit[0]);
             String[] currentTime = javaTimerString();
             // boolean tenMinuteAlert = tenminutegenerator(newDate);
             // Returns as Task Name:Year-Month-Day-Hour:Minute
             String currentDate = taskNameSplit[0] + ":" + currentTime[0] + "-" + currentTime[1] + "-" + currentTime[2]
                     + "-" + currentTime[3] + ":" + currentTime[4];
+            //Alerts with checks 
             if (currentDate.equals(taskHalfDue)) {
                 alertSentHalf += 1;
                 filePath = "onHalfDue.csv";
@@ -622,6 +716,7 @@ public class App extends Application {
                         + " is at its half point meaning you only have half the time left. Make sure to start if you haven't! ";
                 fileWritingDisplay(filePath, message);
             }
+            //Alerts with checks 
             if (currentDate.equals(newDate)) {
                 filePath = "onDueDate.csv";
                 message = taskNameSplit[0] + " is due right now. Be sure to hand get that finished! ";
@@ -635,11 +730,13 @@ public class App extends Application {
              * " is due in ten minutes! Should get ready to submit! "); fw.close(); }
              */
         }
+        //Message for when without display
         if (alertSentHalf == 0) {
             filePath = "onHalfDue.csv";
             message = "Nothing is at its half point. Keep working";
             fileWritingDisplay(filePath, message);
         }
+        //Message for when without display
         if (alertSentDue == 0) {
             filePath = "onDueDate.csv";
             message = "Looking Good! Nothing is due right now";
@@ -651,10 +748,18 @@ public class App extends Application {
          * fw3.write("Looking Good! Nothing due in ten minutes!"); fw3.close(); }
          */
     }
+    /*
+    Method Name: fileWritingDisplay()
+    Description: Writes the alerts
+    @author: Tyson 
+    @param: filePath (String of file), message (Message to be displayed)
 
+    */
     public static void fileWritingDisplay(String filePath, String message) throws IOException {
+        //File writer
         File filePathDisplay = new File(filePath);
         FileWriter fw = new FileWriter(filePathDisplay);
+        //Writes the message for display
         fw.write(message);
         fw.close();
     }
