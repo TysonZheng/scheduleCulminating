@@ -264,15 +264,24 @@ public class App extends Application {
         return foundInformation;
     }
 
+    /*  Method Name: countLines
+     *  Description: This method counts the number of lines in the specified file (argument String file)
+     * 
+     *  @param file - the name of the file to count lines from
+     * 
+     *  @returns lines - the number of lines in the csv
+     * 
+     *  @author: Kyle
+     */
     public static int countLines(String file) {
-        int lines = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            while (reader.readLine() != null)
-                lines++;
+        int lines = 0;  //defines int variable
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {    //Makes new buffered reader
+            while (reader.readLine() != null)   //As long as reader doesn't return null
+                lines++;    //Increase count of lines by 1
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return lines;
+        return lines;   //Returns # of lines
     }
 
     public static String[] fileReader(String file) throws IOException {
@@ -472,6 +481,7 @@ public class App extends Application {
             System.out.println("ERROR");
         }
     }
+
     /*
     Method name: halfAlertCalculations
     Description: Calculates the amount of total minutes between current time and the time of the due date. It will be divded and sorted into the half date but adding to the current date
