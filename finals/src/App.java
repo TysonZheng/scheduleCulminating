@@ -325,7 +325,8 @@ public class App extends Application {
                 if (!foundTask.equals(searchTask)) {
                     foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
                     System.out.println(foundInformation);
-                    pw.println(foundInformation);
+                    pw.print(foundInformation);
+                    pw.print("\n");
                 }
             }
             fileReader.close();
