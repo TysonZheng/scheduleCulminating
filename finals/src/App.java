@@ -61,90 +61,139 @@ public class App extends Application {
      * 
      * @
      */
+    /*
+    Method name: main()
+    Description: The place where specific items are called according to a timer tasks which will delay and cycle tasks. 
+                 There are 2 separate timer tasks in the main method, one for exercise which needs to run on a 24 hour cycle and the other for the javaTimer and checking alerts happening every new minute.
+    @author: Tyson, Kyle, Morgan, Patrick 
+    */
     public static void main(String[] args) throws Exception {
-        String scheduleFilePath = "schedule.csv";
+        //File paths used with reusable methods
+        String scheduleFilePath = "schedule.csv"; 
         String halfFilePath = "halfalerts.csv";
         String dueDateFilePath = "dueDates.csv";
-        // Launches the application
+        //Launches the application
         launch(args);
-        // Calling the fileReader{}
-        String[] dueDateInput = fileReader(scheduleFilePath);
+        //Timer that runs the tasks in main every second for checks
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
-                // Gets the second every second
-                LocalTime time = LocalTime.now();
-                DateTimeFormatter second = DateTimeFormatter.ofPattern("ss");
-                String secondsInString = time.format(second);
-                int secondsDueDate = Integer.parseInt(secondsInString);
-                // Only gets the date when new minute ()
-                if (secondsDueDate % 60 == 0) {
-                    javaTimer();
-                }
-                int changeInLines = countLines(scheduleFilePath);
+        timer.schedule(new TimerTask(){
+            //Runs the code within the timer
+            public void run(){
+                //Finds the length of CSV files of file paths
+                int dueLines = countLines(scheduleFilePath);
                 int halfLines = countLines(halfFilePath);
-                if (changeInLines != halfLines) {
+                //Local time for the seconds
+                LocalTime time = LocalTime.now(); 
+                //Formats for the seconds
+                DateTimeFormatter second= DateTimeFormatter.ofPattern("ss"); 
+                String secondsInString = time.format(second); 
+                //Converts seconds to integer
+                int secondsDueDate = Integer.parseInt(secondsInString);
+                //Declares the array to store the tasks in CSV
+                String[] dueDateInput = new String[dueLines];
+                
+                //Trys 
+                try {
+                    //Rewrites the schedule CSV
+                    scheduleWriter(scheduleFilePath, dueDateFilePath);
+                    //Gets the tasks from schedule.csv with fileReader 
+                    dueDateInput = fileReader(scheduleFilePath);
+                    //Checks if alerts are supposed to go off
+                    compareMethods(dueDateInput);
+                //Catch  
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //Only if there is a change in the schedule CSV 
+                if (dueLines != halfLines){
+                    //Trys
                     try {
+                        //Writes the halfalerts.csv 
                         halfDateWriter(dueDateInput);
+                    //Catch
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                try {
-                    compareMethods(dueDateInput);
-                    scheduleWriter(scheduleFilePath, dueDateFilePath);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+                
+            }  
+        //Runs every second
         }, 0, 1000);
-        // fileInput(), fileOutput() and all alerts will happen when announcement will
-        // be submitted
-        // fileOutput();
-        scheduleWriter(scheduleFilePath, dueDateFilePath);
-        halfDateWriter(dueDateInput);
-
+        //removeTask();
+        //Other task that runs on 24 hours 
         timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
+        timer.schedule(new TimerTask(){
+            //Runs
+            public void run(){
+                //Trys
                 try {
+                    //Writes daily exercise into the scheduler
                     exerciseWriter(scheduleFilePath);
+                //Catch
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }, 0, 24 * 60 * 60 * 1000);
-
+            } 
+        //Runs 24 hour cycles 
+        }, 0, 24*60*60*1000);
+        
     }
-
-    public static int[] javaTimer() {
+    /*
+    Method Name: javaTimer()
+    Description: A method to get the local time of the computer and formats them into integers to be used in calculations
+                 and other methods that require the time in comparisons. 
+    @author: Tyson 
+    @return: systemTime (An int[] which holds the integer values of the date)
+             systemTime = {Year, Month, Day, Hour, Minute};
+    */
+    public static int[] javaTimer(){
+        //Local time
         LocalTime time = LocalTime.now();
+        //Sets format for minute
         DateTimeFormatter minutes = DateTimeFormatter.ofPattern("mm");
+        //Gets minutes of local time
         String minuteInString = time.format(minutes);
+        //Converts to integer
         int minutesDueDate = Integer.parseInt(minuteInString);
+        //Sets format for hour
         DateTimeFormatter hour = DateTimeFormatter.ofPattern("HH");
+        //Gets hours of local time
         String hourInString = time.format(hour);
+        //Converts to integer
         int hoursDueDate = Integer.parseInt(hourInString);
+        //Local date
         LocalDate date = LocalDate.now();
+        //Sets format for day
         DateTimeFormatter day = DateTimeFormatter.ofPattern("dd");
+        //Gets days of local time
         String dayInString = date.format(day);
+        //Converts to integer
         int daysDueDate = Integer.parseInt(dayInString);
-        if (daysDueDate > 30) {
+        //Rounds 31 days to 30 
+        if (daysDueDate >30){
             daysDueDate = 30;
         }
+        //Sets format for month
         DateTimeFormatter month = DateTimeFormatter.ofPattern("MM");
+        //Gets months of local time 
         String monthInString = date.format(month);
+        //Converts to integer
         int monthsDueDate = Integer.parseInt(monthInString);
+        //Sets format for year
         DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
+        //Gets the year
         String yearsInString = date.format(year);
+        //Converts to integer
         int yearsDueDate = Integer.parseInt(yearsInString);
-        int[] systemTime = { yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate };
+        //Creates array to store the times
+        int[] systemTime = {yearsDueDate, monthsDueDate, daysDueDate, hoursDueDate, minutesDueDate};
+        //returns time
         return systemTime;
     }
 
     /*
-     * Method Name: fileSearcher() Description: A method that searches for a
+     * Method Name: fileSearcher() 
+     * Description: A method that searches for a
      * specific task stored in a csv. It does this by comparing the task name you're
      * looking for with every task name stored in the csv file. It will take each
      * token for that task and store them in their own respective variables. For
@@ -160,38 +209,59 @@ public class App extends Application {
      * 
      * @author: Kyle
      */
-    public static String fileSearcher(String searchTask) throws IOException {
+    /* Method Name: fileSearcher()
+     * Description: A method that searches for a specific task stored in a csv. 
+     *              It does this by comparing the task name you're looking for with every task name stored in the csv file. 
+     *              It will take each token for that task and store them in their own respective variables.
+     *              For example, if you want to find a task named "Math Test", it will find the matching task and it's dates. The token, "Math Test" will be stored in its respective variable.
+     * 
+     * @param searchTask - The string variable that stores the specific task the user is looking for.
+     * @returns foundInformation - A string variable that combines and stores each variable holding the found csv information. 
+     * @author: Kyle
+     */
+    public static String fileSearcher(String searchTask) throws IOException{
+        //Initializing Scanner
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
+        //filePath for search
         String filePath = "halfalerts.csv";
+        //Sets boolean as false
         boolean found = false;
-        String foundTask = "", foundDay = "", foundMonth = "", foundYear = "", foundHour = "", foundMinute = "";
+        //Initializes variables 
+        String foundTask = "", foundDay = "", foundMonth = "", foundYear ="", foundHour = "", foundMinute = "";
         String foundInformation = "";
+        //Trys
         try {
+            //new fileReader
             fileReader = new Scanner(new File(filePath));
+            //Delimiter to separate
             fileReader.useDelimiter("[:\n-]");
-
-            while (fileReader.hasNext() && !found) {
+            //Loops while there is a next line and the task has yet to be found 
+            while (fileReader.hasNext() && !found){
+                //Stores the values in CSV
                 foundTask = fileReader.next();
                 foundYear = fileReader.next();
                 foundMonth = fileReader.next();
                 foundDay = fileReader.next();
                 foundHour = fileReader.next();
                 foundMinute = fileReader.next();
+                //Checks if task equals 
                 if (foundTask.equals(searchTask)) {
                     found = true;
                 }
             }
+            //If the loop stops
             if (found) {
-                // System.out.println("The Task " + foundTask + " is due on: " + foundYear + "-"
-                // + foundMonth + "-" + foundDay + " at " + foundHour + ":" + foundMinute);
-                foundInformation = foundTask + ":" + foundYear + "-" + foundMonth + "-" + foundDay + "-" + foundHour
-                        + ":" + foundMinute;
+                //Stores as a string in the same format as other dates
+                foundInformation = foundTask+":"+foundYear+"-"+foundMonth+"-"+foundDay+"-"+foundHour+":"+foundMinute;
             }
+        //Catch 
         } catch (Exception e) {
             System.out.println("ERROR");
         }
+        //Close reader
         reader.close();
+        //Returns string 
         return foundInformation;
     }
 
@@ -242,8 +312,7 @@ public class App extends Application {
     public static void exerciseWriter(String destinationFile) throws IOException {
         String[] currentTasks = fileReader(destinationFile);
         String[] stringTimer = javaTimerString();
-        String addExercise = "Daily exercise:" + stringTimer[0] + "-" + stringTimer[1] + "-" + stringTimer[2] + "-"
-                + "23:59";
+        String addExercise = "Daily exercise:" + stringTimer[0] + "-" + stringTimer[1] + "-" + stringTimer[2] + "-"+ "23:59";
         File filePath = new File("schedule.csv");
         FileWriter fw = new FileWriter(filePath, true);
 
@@ -363,6 +432,14 @@ public class App extends Application {
         }
         reader.close();
     }
+    /*
+    Method name: halfAlertCalculations
+    Description: Calculates the amount of total minutes between current time and the time of the due date. It will be divded and sorted into the half date but adding to the current date
+                 The returned values are checked for logic and are returned as a string with format
+    @author: Tyson 
+    @param: dueDateInput (int[] of the due date), taskName (Name of the task being passed)
+    @return: returnedArrayDate (String of the half date)
+    */
 
     public static String halfAlertCalculations(int[] dueDateInput, String taskName) {
         // systemTime = {Year, month, day, hour, minute}
