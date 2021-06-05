@@ -78,31 +78,43 @@ public class AppController implements Initializable {
     public void onClickGen(ActionEvent E) throws IOException {
         File file = new File("dueDates.csv");
         FileWriter fw = new FileWriter(file);
+        if(TASK==null) {
+            TASK.setPromptText("Invalid");
+        }
+        String[] newTaskDue = {TASK.getText(),YEAR.getText(),MONTH.getText(),DATE.getText(),HOUR.getText(),MINUTE.getText()};
+        App complete = new App();
+        int[] integerForTask = complete.integerDueDate(newTaskDue);
+        boolean pastTask = complete.validatingTaskTime(integerForTask);
+        if (pastTask ==true){
+            fw.write(TASK.getText());
+            fw.write(":");
+            fw.write(YEAR.getText());
+            fw.write("-");
+            fw.write(MONTH.getText());
+            fw.write("-");
+            fw.write(DATE.getText());
+            fw.write("-");
+            fw.write(HOUR.getText());
+            fw.write(":");
+            fw.write(MINUTE.getText());
+            fw.write("\n");
+            fw.close();
+        }
+        else{
+            TASK.setPromptText("Invalid");
+            YEAR.setPromptText("Invalid");
+            MONTH.setPromptText("Invalid");
+            DATE.setPromptText("Invalid");
+            HOUR.setPromptText("Invalid");
+            MINUTE.setPromptText("Invalid");
 
-        fw.write(TASK.getText());
-        fw.write(":");
-        fw.write(YEAR.getText());
-        fw.write("-");
-        fw.write(MONTH.getText());
-        fw.write("-");
-        fw.write(DATE.getText());
-        fw.write("-");
-        fw.write(HOUR.getText());
-        fw.write(":");
-        fw.write(MINUTE.getText());
-        fw.write("\n");
-        fw.close();
-
+        }
         YEAR.clear();
         MONTH.clear();
         DATE.clear();
         HOUR.clear();
         MINUTE.clear();
         TASK.clear();
-
-        if(TASK.getText()==null) {
-            TASK.setPromptText("Invalid");
-        }
     }
 
     @FXML
@@ -166,5 +178,3 @@ public class AppController implements Initializable {
         } 
     }
 }
-
-
