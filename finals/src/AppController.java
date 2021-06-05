@@ -100,7 +100,7 @@ public class AppController implements Initializable {
         MINUTE.clear();
         TASK.clear();
 
-        if(TASK==null) {
+        if(TASK.getText()==null) {
             TASK.setPromptText("Invalid");
         }
     }
