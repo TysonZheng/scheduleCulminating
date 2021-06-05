@@ -274,30 +274,30 @@ public class App extends Application {
             //Calculations
             String newDate = taskCSV[i];
             String[] taskArray = splitsString(newDate);
-            String taskName = taskArray[0];
-            int[] intConversion = integerDueDate(taskArray);
-
-            Calendar c = Calendar.getInstance();
-
-            c.set(Calendar.YEAR, intConversion[0]);
-            c.set(Calendar.MONTH, intConversion[1]-1);
-            c.set(Calendar.DATE, intConversion[2]);
-            c.set(Calendar.HOUR_OF_DAY, intConversion[3]);
-            c.set(Calendar.MINUTE, intConversion[4]);
-            c.set(Calendar.SECOND, 0);
-
-            Date taskDueDate = c.getTime();
-
-            Date currentDate = new Date();
-
-            System.out.println("Current Date " + currentDate);
-            System.out.println("Due Date for " + taskName + " is at " + taskDueDate);
-            System.out.println("Is " + taskName + " due?: " + taskDueDate.before(currentDate));
-            pastDue[i] = taskDueDate.before(currentDate);
+            int[] taskDateInt = integerDueDate(taskArray);
+            boolean pastTaskDate = validatingTaskTime(taskDateInt);
+            pastDue[i] =pastTaskDate;
         }
         return pastDue;
     }
+    public static boolean validatingTaskTime(int[] intConversion){
+        
+        Calendar c = Calendar.getInstance();
 
+        c.set(Calendar.YEAR, intConversion[0]);
+        c.set(Calendar.MONTH, intConversion[1]-1);
+        c.set(Calendar.DATE, intConversion[2]);
+        c.set(Calendar.HOUR_OF_DAY, intConversion[3]);
+        c.set(Calendar.MINUTE, intConversion[4]);
+        c.set(Calendar.SECOND, 0);
+
+        Date taskDueDate = c.getTime();
+
+        Date currentDate = new Date();
+        boolean taskCheck = taskDueDate.before(currentDate);
+        return taskCheck;
+
+    }
     public static void removeTask() throws IOException{
         Scanner fileReader;
         Scanner reader = new Scanner(System.in);
@@ -390,7 +390,6 @@ public class App extends Application {
         return halfTimeArray;
     }
     public static int[] integerDueDate(String[] stringDue){
-        
         int year = Integer.parseInt(stringDue[1]);
         int month = Integer.parseInt(stringDue[2]);
         int day = Integer.parseInt(stringDue[3]);
