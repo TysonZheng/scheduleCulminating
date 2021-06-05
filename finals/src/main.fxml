@@ -46,16 +46,16 @@
                <font>
                   <Font size="16.0" />
                </font></TextArea>
-            <Button fx:id="refresh" layoutX="25.0" layoutY="237.0" mnemonicParsing="false" onAction="#onClickGen" text="ADD" />
+            <Button fx:id="refresh" layoutX="25.0" layoutY="237.0" mnemonicParsing="false" onAction="#onClickDisplay" text="ADD" />
             <TextArea fx:id="tenM" layoutX="905.0" layoutY="211.0" prefHeight="200.0" prefWidth="200.0" />
             <TextArea fx:id="halfTime" layoutX="905.0" layoutY="515.0" prefHeight="200.0" prefWidth="200.0" />
             <Label fx:id="TENL" layoutX="905.0" layoutY="182.0" text="10 MINUTES LEFT" />
             <Label fx:id="HL" layoutX="905.0" layoutY="490.0" text="HALF THE TIME LEFT" />
             <Label fx:id="DD" layoutX="602.0" layoutY="241.0" text="Due Dates" />
             <TextArea fx:id="upcoming" layoutX="597.0" layoutY="264.0" prefHeight="200.0" prefWidth="217.0" />
-            <TextField fx:id="tcompleted" layoutX="597.0" layoutY="578.0" promptText="Task Completed" />
-            <Button fx:id="complete" layoutX="773.0" layoutY="578.0" mnemonicParsing="false" text="Complete" />
+            <TextField fx:id="tcompleted" layoutX="602.0" layoutY="575.0" promptText="Task Completed" />
+            <Button fx:id="complete" layoutX="780.0" layoutY="575.0" mnemonicParsing="false" onAction="#onClickComplete" text="Complete" />
             <Button fx:id="rrefresh" layoutX="1091.0" layoutY="89.0" mnemonicParsing="false" onAction="#onCLickRefresh" text="Refresh" />
-         </children></AnchorPane>
+         </children></AnchorPane>  
    </left>
 </BorderPane>
