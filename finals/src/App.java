@@ -275,19 +275,15 @@ public class App extends Application {
             String newDate = taskCSV[i];
             String[] taskArray = splitsString(newDate);
             String taskName = taskArray[0];
-            int dueYear = Integer.parseInt(taskArray[1]);
-            int dueMonth = Integer.parseInt(taskArray[2]);
-            int dueDay = Integer.parseInt(taskArray[3]);
-            int dueHour = Integer.parseInt(taskArray[4]);
-            int dueMinute = Integer.parseInt(taskArray[5]);
+            int[] intConversion = integerDueDate(taskArray);
 
             Calendar c = Calendar.getInstance();
 
-            c.set(Calendar.YEAR, dueYear);
-            c.set(Calendar.MONTH, dueMonth-1);
-            c.set(Calendar.DATE, dueDay);
-            c.set(Calendar.HOUR_OF_DAY, dueHour);
-            c.set(Calendar.MINUTE, dueMinute);
+            c.set(Calendar.YEAR, intConversion[0]);
+            c.set(Calendar.MONTH, intConversion[1]-1);
+            c.set(Calendar.DATE, intConversion[2]);
+            c.set(Calendar.HOUR_OF_DAY, intConversion[3]);
+            c.set(Calendar.MINUTE, intConversion[4]);
             c.set(Calendar.SECOND, 0);
 
             Date taskDueDate = c.getTime();
