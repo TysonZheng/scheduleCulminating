@@ -76,7 +76,7 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickGen(ActionEvent E) throws IOException {
-        File file = new File("dueDates.csv");
+        File file = new File("schedule.csv");
         FileWriter fw = new FileWriter(file);
 
         fw.write(TASK.getText());
@@ -100,8 +100,8 @@ public class AppController implements Initializable {
         MINUTE.clear();
         TASK.clear();
 
-        if(2>1) {
-            TASK.setText("ree");
+        if(TASK==null) {
+            TASK.setPromptText("Invalid");
         }
     }
 
@@ -111,7 +111,7 @@ public class AppController implements Initializable {
         tcompleted.clear();
         
         App complete = new App();
-        complete.fileSearcher(getcomplete);
+        complete.removeTask(getcomplete);
     }
 
     @FXML
@@ -121,25 +121,29 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickDisplay(ActionEvent E) throws IOException {
-        Path fileN = Path.of("dueDates.csv");
+        Path fileN = Path.of("schedule.csv");
         String text = Files.readString(fileN);
         tarea.appendText(text);
     }
 
     @FXML 
     public void onCLickRefresh(ActionEvent E) throws IOException{
+        halfTime.clear();
+        upcoming.clear();
+        tenM.clear();
+        
         Path fileOHD = Path.of("onHalfDue.csv");
         Path fileODD = Path.of("onDueDate.csv");
-        Path fileOTM = Path.of("onTenMinute.csv");
+        // Path fileOTM = Path.of("onTenMinute.csv");
 
         try {
             String textOHD = Files.readString(fileOHD);
             halfTime.appendText(textOHD);
             String textODD = Files.readString(fileODD);
             upcoming.appendText(textODD);
-            String textOTM = Files.readString(fileOTM);
-            tenM.appendText(textOTM);
-        } catch (IOException e) {
+            // String textOTM = Files.readString(fileOTM);
+            // tenM.appendText(textOTM);
+        } catch (IOException e) {   
             e.printStackTrace();
         }
     }
@@ -148,15 +152,15 @@ public class AppController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Path fileOHD = Path.of("onHalfDue.csv");
         Path fileODD = Path.of("onDueDate.csv");
-        Path fileOTM = Path.of("onTenMinute.csv");
+        // Path fileOTM = Path.of("onTenMinute.csv");
 
         try {
             String textOHD = Files.readString(fileOHD);
             halfTime.appendText(textOHD);
             String textODD = Files.readString(fileODD);
             upcoming.appendText(textODD);
-            String textOTM = Files.readString(fileOTM);
-            tenM.appendText(textOTM);
+            // String textOTM = Files.readString(fileOTM);
+            // tenM.appendText(textOTM);
         } catch (IOException e) {
             e.printStackTrace();
         } 
