@@ -76,7 +76,7 @@ public class AppController implements Initializable {
 
     @FXML
     public void onClickGen(ActionEvent E) throws IOException {
-        File file = new File("dueDates.csv");
+        File file = new File("schedule.csv");
         FileWriter fw = new FileWriter(file);
         if(TASK==null) {
             TASK.setPromptText("Invalid");
