@@ -347,6 +347,64 @@ public class App extends Application {
     public static String halfAlertCalculations(int[]dueDateInput, String taskName){
         //systemTime = {Year, month, day, hour, minute}
         int[] systemTime = javaTimer();
+        long minuteTotal = totalMinutes(dueDateInput);
+        long halfAlertTimer=minuteTotal/2;
+        long halfAlertYears= (halfAlertTimer/525600);
+        long halfAlertMonth = halfAlertTimer/ 43800 - (halfAlertYears*12); 
+        long halfAlertDay = halfAlertTimer/1440 - (halfAlertMonth*30+(halfAlertYears*12)*30);
+        long halfAlertHour = halfAlertTimer/(60) - ((halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24);
+        long halfAlertMinute = halfAlertTimer- ((halfAlertHour+(halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24)*60);
+        //Returned values
+        int returnedYear = systemTime[0] + (int)halfAlertYears;
+        int returnedMonth = systemTime[1] + (int)halfAlertMonth;
+        int returnedDay = systemTime[2] + (int)halfAlertDay;
+        int returnedHour = systemTime[3] + (int)halfAlertHour;
+        int returnedMinute = systemTime[4] + (int)halfAlertMinute;
+        if (returnedMinute>60){
+            returnedHour += returnedMinute/60;
+            returnedMinute = returnedMinute%60;
+        }
+        if(returnedHour>24){
+            returnedDay += returnedHour/24;
+            returnedHour = returnedHour%24;
+        }
+        if(returnedDay >30){
+            returnedMonth += returnedDay/30;
+            returnedDay = returnedDay%30;     
+        }
+        if(returnedMonth > 12){
+            returnedYear += returnedMonth/12;
+            returnedMonth = returnedMonth%12;
+        }
+        //Returns as Task Name:Year-Month-Day-Hour:Minute
+        String returnedArrayDate = taskName +":" + String.valueOf((returnedYear)) + "-"+String.valueOf((returnedMonth))+"-"+String.valueOf((returnedDay))+"-"+String.valueOf((returnedHour))+":"+String.valueOf((returnedMinute));
+        return returnedArrayDate;
+    }
+    public static String[] halfDateAlertGenerator(String[] dueDateCSV){
+        String[] halfTimeArray = new String[0];
+        for (int i =0; i<dueDateCSV.length; i++){
+            //Calculations
+            String newDate = dueDateCSV[i];
+            String[] taskArray = splitsString(newDate);
+            int[] dueDateInteger = integerDueDate(taskArray);
+            String halfDue = halfAlertCalculations(dueDateInteger, taskArray[0]);
+            halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
+            halfTimeArray[halfTimeArray.length - 1] = halfDue;    
+        }
+        return halfTimeArray;
+    }
+    public static int[] integerDueDate(String[] stringDue){
+        
+        int year = Integer.parseInt(stringDue[1]);
+        int month = Integer.parseInt(stringDue[2]);
+        int day = Integer.parseInt(stringDue[3]);
+        int hour = Integer.parseInt(stringDue[4]);            
+        int minute = Integer.parseInt(stringDue[5]);
+        int[] dueDateFormatted = {year,month,day,hour,minute};
+        return dueDateFormatted;
+    }
+    public static long totalMinutes(int[]dueDateInput) {
+        int[] systemTime = javaTimer();
         long minuteTotal = 0;
         if ((dueDateInput[0] > systemTime[0]) && ((((dueDateInput[0] - systemTime[0])*12 - systemTime[1])+dueDateInput[1])>12)){
             minuteTotal += ((((dueDateInput[0] - systemTime[0])*12 - systemTime[1])+(dueDateInput[1]-1))*43800);
@@ -390,55 +448,7 @@ public class App extends Application {
         else if(dueDateInput[4]>systemTime[4]) {
             minuteTotal += (dueDateInput[4] - systemTime[4]);
         }
-        long halfAlertTimer=minuteTotal/2;
-        long halfAlertYears= (halfAlertTimer/525600);
-        long halfAlertMonth = halfAlertTimer/ 43800 - (halfAlertYears*12); 
-        long halfAlertDay = halfAlertTimer/1440 - (halfAlertMonth*30+(halfAlertYears*12)*30);
-        long halfAlertHour = halfAlertTimer/(60) - ((halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24);
-        long halfAlertMinute = halfAlertTimer- ((halfAlertHour+(halfAlertDay+halfAlertMonth*30+(halfAlertYears*12)*30)*24)*60);
-        //Returned values
-        int returnedYear = systemTime[0] + (int)halfAlertYears;
-        int returnedMonth = systemTime[1] + (int)halfAlertMonth;
-        int returnedDay = systemTime[2] + (int)halfAlertDay;
-        int returnedHour = systemTime[3] + (int)halfAlertHour;
-        int returnedMinute = systemTime[4] + (int)halfAlertMinute;
-        if (returnedMinute>60){
-            returnedHour += returnedMinute/60;
-            returnedMinute = returnedMinute%60;
-        }
-        if(returnedHour>24){
-            returnedDay += returnedHour/24;
-            returnedHour = returnedHour%24;
-        }
-        if(returnedDay >30){
-            returnedMonth += returnedDay/30;
-            returnedDay = returnedDay%30;     
-        }
-        if(returnedMonth > 12){
-            returnedYear += returnedMonth/12;
-            returnedMonth = returnedMonth%12;
-        }
-        //Returns as Task Name:Year-Month-Day-Hour:Minute
-        String returnedArrayDate = taskName +":" + String.valueOf((returnedYear)) + "-"+String.valueOf((returnedMonth))+"-"+String.valueOf((returnedDay))+"-"+String.valueOf((returnedHour))+":"+String.valueOf((returnedMinute));
-        return returnedArrayDate;
-    }
-    public static String[] halfDateAlertGenerator(String[] dueDateCSV){
-        String[] halfTimeArray = new String[0];
-        for (int i =0; i<dueDateCSV.length; i++){
-            //Calculations
-            String newDate = dueDateCSV[i];
-            String[] taskArray = splitsString(newDate);
-            int year = Integer.parseInt(taskArray[1]);
-            int month = Integer.parseInt(taskArray[2]);
-            int day = Integer.parseInt(taskArray[3]);
-            int hour = Integer.parseInt(taskArray[4]);
-            int minute = Integer.parseInt(taskArray[5]);
-            int[] dueDateFormatted = {year,month,day,hour,minute};
-            String halfDue = halfAlertCalculations(dueDateFormatted, taskArray[0]);
-            halfTimeArray = Arrays.copyOf(halfTimeArray, halfTimeArray.length + 1);
-            halfTimeArray[halfTimeArray.length - 1] = halfDue;    
-        }
-        return halfTimeArray;
+        return minuteTotal;
     }
     public static String[] splitsString(String dueDate){
         String[] initialSplit = dueDate.split("-"); //[1]= Month, [2] = Day 
