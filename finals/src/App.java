@@ -389,48 +389,89 @@ public class App extends Application {
         return taskCheck;
 
     }
-
+    /*  Method Name: removeTask()
+     *
+     *  Description: This method removes a specified task from schedule.csv 
+     *  based on the user's "Complete" input in the GUI. The method uses two 
+     *  files, 'schedule.csv' and a temporary file, 'temp.csv' that stores all 
+     *  tasks except the specified task. It goes line by line and stores each 
+     *  token separately in their respective variables and if the read task does 
+     *  NOT match the specified task, it will string together all the tokens into 
+     *  a single variable and add it into 'temp.csv'. Once all lines in 'schedule.csv' 
+     *  have been checked, all BUT the specified task will be added to 'temp.csv'. 
+     *  'schedule.csv', will be deleted and replaced with 'temp.csv' which is 
+     *  renamed to 'schedule.csv'
+     * 
+     *  @author: Kyle
+     * 
+     *  @param searchTask - a string variable holding the name of the task 
+     *  that is specified to be removed
+     * 
+     * 
+     *  @param filePath - string variable storing the file name, "schedule.csv"
+     * 
+     *  @param tempFile - string variable storing the temporary file name, "temp.csv"
+     * 
+     *  @returns - edited 'schedule.csv'
+     *  
+     */
     public static void removeTask(String searchTask) throws IOException {
-        Scanner fileReader;
-        Scanner reader = new Scanner(System.in);
+        /* Defining Variables */
+
+        //Initialize empty scanner 
+        Scanner fileReader; 
+        //File names
         String filePath = "schedule.csv";
         String tempFile = "temp.csv";
+        //Empty variables
         String foundTask = "", foundDay = "", foundMonth = "", foundYear = "", foundHour = "", foundMinute = "";
         String foundInformation = "";
+        //Defines new files
         File oldFile = new File(filePath);
         File newFile = new File(tempFile);
         try {
-            FileWriter fw = new FileWriter(tempFile, true);
+            //Defines writers
+            FileWriter fw = new FileWriter(tempFile, true); //Writes to 'tempFile'
             BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(bw);
+            PrintWriter pw = new PrintWriter(bw);   //PrintWriter using BufferedWriter and FileWriter
+            //Initialize new scanner to read file
             fileReader = new Scanner(new File(filePath));
+            //Set delimiters
             fileReader.useDelimiter("[:\n-]");
 
+            //While the file reader can find a new entry
             while (fileReader.hasNext()) {
+                //Sets the variable values as the tokens found
                 foundTask = fileReader.next();
                 foundYear = fileReader.next();
                 foundMonth = fileReader.next();
                 foundDay = fileReader.next();
                 foundHour = fileReader.next();
                 foundMinute = fileReader.next();
+                //As long as the found task DOES NOT match the search task
                 if (!foundTask.equals(searchTask)) {
-                    foundInformation = foundTask + ":" + foundYear + "-" + foundMonth + "-" + foundDay + "-" + foundHour
-                            + ":" + foundMinute;
-                    System.out.println(foundInformation);
+                    //Strings together the tokens inside a string variable
+                    foundInformation = foundTask + ":" + foundYear + "-" + foundMonth + "-" + foundDay + "-" + foundHour + ":" + foundMinute;
+                    //Writes the data to the csv
                     pw.print(foundInformation);
                     pw.print("\n");
                 }
             }
+            //closes scanner
             fileReader.close();
+            //Flush/Close writer
             pw.flush();
             pw.close();
+            //Delete old schedule.csv
             oldFile.delete();
+            //Creates a new schedule.csv and puts temp.csv's data inside it
             File dump = new File(filePath);
             newFile.renameTo(dump);
-        } catch (Exception e) {
 
+        //Checks for exception    
+        } catch (Exception e) {
+            System.out.println("ERROR");
         }
-        reader.close();
     }
     /*
     Method name: halfAlertCalculations
