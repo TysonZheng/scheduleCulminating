@@ -284,61 +284,121 @@ public class App extends Application {
         return lines;   //Returns # of lines
     }
 
+    /*  Method Name: fileReader
+     *  Description: This method takes and stores each line of the csv inside of an array.
+     *  The array is then returned.
+     * 
+     *  @param file - the name of the file to take data from
+     * 
+     *  @returns task - an array that stores each line from the csv in separate indexes
+     * 
+     *  @author: Kyle
+     */
     public static String[] fileReader(String file) throws IOException {
+        //Variable declaration
         String line = "";
-        int numOfLines = countLines(file);
-        String task[] = new String[numOfLines];
         int counter = 0;
+        int numOfLines = countLines(file);  //finds the number of lines in 'file' by calling the countLines() method
+        String task[] = new String[numOfLines]; //Defines new string array with the length of 'numOfLines'
         try {
-            BufferedReader csvReader = new BufferedReader(new FileReader(file));
-            while ((line = csvReader.readLine()) != null) {
-                task[counter] = line;
-                counter++;
+            //New buffered reader using file reader + file name
+            BufferedReader csvReader = new BufferedReader(new FileReader(file));    
+            //While the reader doesn't read null
+            while ((line = csvReader.readLine()) != null) { 
+                task[counter] = line;   //Stores the read line inside task[] array
+                counter++;  //incrases counter by 1
             }
-            csvReader.close();
+            csvReader.close(); 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return task;
+        return task;    //Returns task array
     }
 
+    /*  Method Name: halfDateWriter
+     *  Description: This method takes the half dates of each task and stores them inside an array.
+     *  The array of half dates is then written to 'halfalerts.csv'.
+     *  Evertime the method is called, 'halfalerts' is overwritten as to not create duplicates
+     * 
+     *  @param dueDateCSV - the argument String array that stores the due dates
+     * 
+     *  @returns 'halfalerts.csv' - csv file that holds the half dates of each task
+     * 
+     *  @author: Tyson, Kyle
+     */
     public static void halfDateWriter(String[] dueDateCSV) throws IOException {
-        String[] arr = halfDateAlertGenerator(dueDateCSV);
-        File filePath = new File("halfalerts.csv");
-        try (PrintWriter writer = new PrintWriter(filePath)) {
-            for (int i = 0; i < arr.length; i++) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(arr[i]);
-                sb.append("\n");
-                writer.write(sb.toString());
+        //Defines an array by calling the halfDateAlertGenerator() method
+        String[] arr = halfDateAlertGenerator(dueDateCSV);  
+        //Defines a new file 
+        File filePath = new File("halfalerts.csv"); 
+        try (PrintWriter writer = new PrintWriter(filePath)) {  //New print writer
+            //Increases the int i used for the array's indexes
+            for (int i = 0; i < arr.length; i++) {  
+                StringBuilder sb = new StringBuilder(); //New string builder
+                sb.append(arr[i]);  //Appends arr[i] 
+                sb.append("\n");    //Appends \n
+                writer.write(sb.toString());    //Adds the appended items to the csv
             }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    /*  Method Name: exerciseWriter
+     *  Description: This method creates a due date for when the user should exercise by. 
+     *  It then adds the exercise date to 'schedule.csv'
+     * 
+     *  @param destinationFile - the argument String that stores the name of the destination csv
+     * 
+     *  @returns addExercise - the due date for when the user should exercise by
+     *  @returns 'schedule.csv' - csv file that holds all the due dates
+     * 
+     *  @author: Tyson, Kyle
+     */
     public static void exerciseWriter(String destinationFile) throws IOException {
-        String[] currentTasks = fileReader(destinationFile);
-        String[] stringTimer = javaTimerString();
+        //Defines new String arrays
+        String[] currentTasks = fileReader(destinationFile);    //Defines the array by calling the fileReader method
+        String[] stringTimer = javaTimerString();   //Defines the array by calling the javaTimerString method
+        //Strings together each token into one variable
         String addExercise = "Daily exercise:" + stringTimer[0] + "-" + stringTimer[1] + "-" + stringTimer[2] + "-"+ "23:59";
+        //Defines new file
         File filePath = new File("schedule.csv");
+        //New file writer. Writes to the filePath
         FileWriter fw = new FileWriter(filePath, true);
 
-        boolean add = true;
+        //Defines boolean
+        boolean add = true; //this boolean determines whether to add the task or not
         for (int i = 0; i < currentTasks.length; i++) {
-            if (addExercise.equals(currentTasks[i])) {
-                add = false;
+            //If the exercise task is already in the file
+            if (addExercise.equals(currentTasks[i])) {  
+                add = false;    //Will not allow the exercise task to be added
             }
         }
-        if (add == true) {
-            System.out.println(
-                    "You do not have exercise listed today. Daily Exercise task has been added to your schedule");
-            fw.write(addExercise);
-            fw.write("\n");
-            fw.close();
+        if (add == true) {  //If the exercise task is not a duplicate
+            System.out.println("You do not have exercise listed today. Daily Exercise task has been added to your schedule");
+            //writes using file writer
+            fw.write(addExercise);  //Writes 'addExercise'
+            fw.write("\n"); //Writes '\n;'
+            fw.close(); //closes file writer
         }
     }
 
+    /*  Method Name: scheduleWriter
+     *  Description: This method takes the newly added tasks inside of 'dueDates.csv' and 
+     *  determines if they're duplicate entries or not. If the task is a duplicate, the 
+     *  task WILL NOT be added. If it is not, the task WILL be added. 
+     *  The non-duplicate tasks are written to 'schedule.csv'
+     * 
+     *  @param destinationFile - the arg String that stores the name of the destination csv 
+     *  (the csv that will be written to)
+     * 
+     *  @param addElementFile - the arg String that stores the name of the csv that 
+     *  elements will be taken from
+     * 
+     *  @returns 'schedule.csv' - csv file that holds all the due dates
+     * 
+     *  @author: Kyle
+     */
     public static void scheduleWriter(String destinationFile, String addElementFile) throws IOException {
         String[] currentTasks = fileReader(destinationFile); // Elements from the destination file
         String[] toBeAdded = fileReader(addElementFile); // Elements from the file you're adding
@@ -347,15 +407,20 @@ public class App extends Application {
         boolean add;
 
         try {
+            //For loop that goes through each task that are going to be added
             for (int e = 0; e < toBeAdded.length; e++) {
                 add = true;
+                //For loop that goes through each task in the destination file
                 for (int i = 0; i < currentTasks.length; i++) {
-                    if (toBeAdded[e].equals(currentTasks[i])) {
-                        add = false;
+                    //Compares each element that will be added with the current elements in the destination file
+                    if (toBeAdded[e].equals(currentTasks[i])) {     //If the adding element is a duplicate
+                        add = false;    //Will not write to csv
                     }
                 }
+                //If the adding element is not a duplicate
                 if (add == true) {
                     System.out.println(toBeAdded[e] + " has no duplicates. It will be added to schedule.csv");
+                    //Appends the elements
                     fw.append(toBeAdded[e]);
                     fw.append("\n");
                 }
@@ -366,35 +431,65 @@ public class App extends Application {
         }
     }
 
+    /*  Method Name: scheduleWriter
+     *  Description: This method compares the current date with the specified task's due date
+     *  by calling other methods. It will then return whether or not the comparison is true or false
+     * 
+     *  @param taskCSV - the arg String array that stores the tasks/entries of 'schedule.csv'
+     * 
+     *  @param taskArray - string array that stores the task names
+     *  
+     *  @param taskDateInt - int array that stores the dates/times 
+     * 
+     *  @returns pastDue - boolean array indicating if the task is past the due date
+     * 
+     *  @author: Kyle, Tyson
+     */
     public static boolean[] compareDate(String[] taskCSV) {
+        //new boolean array with length of 'taskCSV'
         boolean[] pastDue = new boolean[taskCSV.length];
+        //For loop that goes through each task
         for (int i = 0; i < taskCSV.length; i++) {
             // Calculations
             String newDate = taskCSV[i];
             String[] taskArray = splitsString(newDate);
             int[] taskDateInt = integerDueDate(taskArray);
             boolean pastTaskDate = validatingTaskTime(taskDateInt);
-            pastDue[i] = pastTaskDate;
+            pastDue[i] = pastTaskDate;  //Adds the boolean value to the array
         }
-        return pastDue;
+        return pastDue; //Returns boolean array
     }
 
+    /*  Method Name: validatingTaskTime
+     *  Description: This method converts the task's date into the Calendar format so 
+     *  that it can be compared to the current time
+     * 
+     *  @param intConversion - int array that stores the times to be converted  
+     * 
+     *  @returns taskCheck - returns the boolean determining if the task's 
+     *  due date is before the current time (whether it's overdue or not)
+     * 
+     *  @author: Kyle, Tyson
+     */
     public static boolean validatingTaskTime(int[] intConversion) {
 
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();    //Creates new calendar
 
-        c.set(Calendar.YEAR, intConversion[0]);
+        //Sets the calendar dates
+        c.set(Calendar.YEAR, intConversion[0]); 
         c.set(Calendar.MONTH, intConversion[1] - 1);
         c.set(Calendar.DATE, intConversion[2]);
         c.set(Calendar.HOUR_OF_DAY, intConversion[3]);
         c.set(Calendar.MINUTE, intConversion[4]);
         c.set(Calendar.SECOND, 0);
 
+        //Creates the due date under calendar format
         Date taskDueDate = c.getTime();
-
+        //Sets the current date
         Date currentDate = new Date();
+        //Determines if the date is overdue
         boolean taskCheck = taskDueDate.before(currentDate);
-        return taskCheck;
+        return taskCheck;   //Returns boolean
 
     }
     /*  Method Name: removeTask()
